@@ -131,6 +131,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       imageUrl: Assets.joyqulDaily,
       status:"連載中",
       canvasType:"wide",
+      tags: ["日常", "四格"],
       linkUrl: "https://cxc.today/zh/@joyqul/book/42711"
     }
   ],
