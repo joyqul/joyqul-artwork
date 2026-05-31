@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { 
   Share2, 
   Check, 
-  Flame, 
   Instagram, 
   Facebook, 
   Youtube, 
@@ -58,8 +57,6 @@ export default function App() {
         return Facebook;
       case 'youtube':
         return Youtube;
-      case 'plurk':
-        return Flame;
       case 'email':
         return Mail;
       case 'threads':

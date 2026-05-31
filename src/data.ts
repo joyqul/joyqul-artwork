@@ -41,13 +41,6 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       iconName: "Facebook"
     },
     {
-      id: "soc-4",
-      platform: "plurk",
-      url: "https://www.plurk.com/joyqul",
-      label: "Plurk 噗浪",
-      iconName: "Flame"
-    },
-    {
       id: "soc-5",
       platform: "youtube",
       url: "https://www.youtube.com/@joyqul-tw",
