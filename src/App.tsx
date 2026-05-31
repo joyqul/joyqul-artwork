@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Share2, 
   Check, 
@@ -14,13 +14,7 @@ import {
   Mail, 
   Globe, 
   MessageCircle,
-  Star,
-  ExternalLink,
-  ChevronUp,
-  LayoutGrid
 } from 'lucide-react';
-import { falseLoveSignalBanner } from '../assets';
-import { PortfolioData, SocialLink, Artwork } from './types';
 import { INITIAL_PORTFOLIO_DATA } from './data';
 
 function SeparateLine({ className = "" }: { className?: string }) {
@@ -36,9 +30,7 @@ function SeparateLine({ className = "" }: { className?: string }) {
 }
 
 export default function App() {
-  const [lang, setLang] = useState<'zh' | 'en'>('zh');
   const [copied, setCopied] = useState<boolean>(false);
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Read-only frontend state mapped from data file
@@ -252,7 +244,7 @@ export default function App() {
 
           {/* Simple footer of the page */}
           <footer className="mt-16 text-center text-[10px] text-[#A69C8E] font-mono tracking-wider">
-            <p>© 2026 {data.profile.name}. Handcrafted portaly stream card.</p>
+            <p>© 2026 {data.profile.name} All rights reserved</p>
           </footer>
 
         </div>
