@@ -1,5 +1,5 @@
 {
-  "name": "Joyqul Art Portfolio",
+  "name": "Joyqul.tw",
   "description": "A beautiful, interactive, and fully-customizable bento-style portfolio for a BL and four-panel comic artist. Inspired by Portaly, with full support for GitHub Pages auto-deployment.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
