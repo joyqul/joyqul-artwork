@@ -241,7 +241,7 @@ export default function App() {
 
           {/* Simple footer of the page */}
           <footer className="mt-16 text-center text-[10px] text-[#A69C8E] font-mono tracking-wider">
-            <p>© 2026 {data.profile.name} All rights reserved</p>
+            <p>© 2026 {data.profile.name} All rights reserved.</p>
           </footer>
 
         </div>
