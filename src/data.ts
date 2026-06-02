@@ -8,10 +8,10 @@ import  * as Assets from '../assets';
 
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   profile: {
-    name: "Joyqul",
+    name: "玖伊枯（飄飄） 🇹🇼",
     subheading: "斜槓畫 BL | 偶爾畫畫日常四格",
     bio: "斜槓畫 BL \n偶爾畫畫日常四格",
-    tags: ["BL / 耽美", "日常四格", "同人創作"],
+    tags: ["BL / 耽美", "日常四格"],
     avatarUrl: Assets.joyqulAvatar, 
     bannerUrl: "",
     themeColor: "indigo",

@@ -66,9 +66,54 @@ export default function App() {
     }
   };
 
+  // Helper to generate highly descriptive alt-tags for SEO and image indexes
+  const getArtworkAltText = (id: string, title?: string) => {
+    const formattedTitle = title && title.trim().length > 0 ? `${title} - ` : "";
+    switch (id) {
+      case 'false_love_signal_manga':
+        return `${formattedTitle}虛假的戀愛訊號 - LINE Webtoon 耽美漫畫 | 玖伊枯 Joyqul 友情與愛情的假訊號 (joyqul.tw)`;
+      case 'false_love_signal_r18':
+        return `虛假的戀愛訊號 R18 刪減番外篇 | 玖伊枯 (Joyqul) 中文同人耽美漫畫創作`;
+      case 'false_love_signal_manga_sound':
+        return `虛假的戀愛訊號 有配音廣播劇短片 / 友情與愛情的假訊號 影片 | 玖伊枯 (Joyqul) 出品`;
+      case 'false_love_signal_ext':
+        return `虛假的戀愛訊號 幕後製作花絮與番外篇 | 玖伊枯 (Joyqul) 同人原創BL`;
+      case 'false_love_signal_shorts':
+        return `虛假的戀愛訊號 動態 YouTube Shorts 漫畫短影音集 | 玖伊枯 (Joyqul)`;
+      case 'calculus_manga':
+        return `${formattedTitle}過氣男優的我竟然成為了微積分補教名師 - LINE Webtoon人氣耽美完結漫畫 | 玖伊枯 (Joyqul) 原創BL作品`;
+      case 'calculus_r18':
+        return `過氣男優的我竟然成為了微積分補教名師 R18 刪減特典番外篇 | 玖伊枯 (Joyqul)`;
+      case 'calculus_ext':
+        return `過氣男優的我竟然成為了微積分補教名師 番外篇 經典同居30題 | 玖伊枯 (Joyqul)`;
+      case 'how_to_date_a_dragon_manga':
+        return `${formattedTitle}要怎麼跟龍談戀愛 - CxC最新超人氣原創耽美連載漫畫 | 玖伊枯 (Joyqul)`;
+      case 'joyqul_daily_manga':
+        return `${formattedTitle}玖伊枯日常四格漫畫 | 玖伊枯 (Joyqul) 爆笑日常生活與創作花絮 (joyqul.tw)`;
+      default:
+        return title ? `${title} - 玖伊枯 Joyqul BL耽美作品` : "玖伊枯 Joyqul 耽美原創同人插畫漫畫創作";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#403C35] font-sans pb-24 relative selection:bg-[#C2A978]/30 selection:text-[#403C35]">
       
+      {/* Search Engine Optimization (SEO) Semantic Content - Invisible but fully indexed by search engines */}
+      <div className="sr-only">
+        <h2>Joyqul 玖伊枯 | 官方原創 BL 漫畫作品集門戶 (joyqul.tw)</h2>
+        <p>歡迎來到台灣人氣原創 BL 耽美漫畫家與四格日常插畫創作者 Joyqul (玖伊枯) 官方門戶網站。本站專為搜尋作品集的讀者提供最直接、高速的官方連載渠道連結。</p>
+        
+        <h3>代表作列表與介紹：</h3>
+        <ul>
+          <li><strong>虛假的戀愛訊號 (False Love Signals)</strong>：於知名平台 LINE Webtoon 熱烈連載的高人氣青春耽美漫畫。講述看似忠犬腹黑學弟攻與理工腦學長受之間的青春心動愛情。</li>
+          <li><strong>過氣男優的我竟然成為了微積分補教名師</strong>：在 LINE Webtoon 獲得超高點閱的耽美完結佳作。描繪了容易害羞又忠犬的可愛學弟攻與誘受學長在微積分補教界擦出的浪漫火花。</li>
+          <li><strong>要怎麼跟龍談戀愛</strong>：在 CXC 熱烈連載的原創奇幻BL漫畫，講述天然撩學弟攻與容易害羞學長受之間心跳難耐的戀愛喜劇故事。</li>
+          <li><strong>玖伊枯日常四格</strong>：Joyqul 的爆笑個人日常生活與作畫花絮四格漫畫。</li>
+        </ul>
+        
+        <p>此網址 (joyqul.tw) 提供所有最新官方線上閱讀連結及同人延伸作品，包含 CXC R18 刪減特典、有配音的推廣影片、背景製作花絮、日常 Webtoon Shorts 影片等。是您追蹤 玖伊枯 (Joyqul) 系列巨作的第一首選入口。</p>
+      </div>
+
       {/* Dynamic Toast Popup */}
       {toastMessage && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#2D2A26] text-[#F9F7F2] font-medium text-xs px-5 py-3 rounded-full shadow-xl flex items-center gap-2 animate-fade-in transition-all">
@@ -102,7 +147,7 @@ export default function App() {
             <div className="p-1 border-2 border-[#C2A978] rounded-full overflow-hidden w-28 h-28 sm:w-32 sm:h-32 bg-white flex items-center justify-center shadow-inner">
               <img
                 src={data.profile.avatarUrl}
-                alt={data.profile.name}
+                alt="Joyqul 玖伊枯 - 官方作品集與頭像門戶網站 (joyqul.tw)"
                 className="w-full h-full object-cover rounded-full"
                 referrerPolicy="no-referrer"
               />
@@ -163,7 +208,7 @@ export default function App() {
                       {/* Background Artwork */}
                       <img
                         src={art.imageUrl}
-                        alt={art.title}
+                        alt={getArtworkAltText(art.id, art.title)}
                         className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
                         referrerPolicy="no-referrer"
                       />
@@ -212,7 +257,7 @@ export default function App() {
                   <div className="relative flex-1 overflow-hidden bg-stone-100">
                     <img
                       src={art.imageUrl}
-                      alt={art.title}
+                      alt={getArtworkAltText(art.id, art.title)}
                       className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
                       referrerPolicy="no-referrer"
                     />
