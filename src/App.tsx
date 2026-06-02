@@ -81,7 +81,7 @@ export default function App() {
       <div className="max-w-xl mx-auto px-5 pt-8">
         
         {/* Top bar with Share, Grid and Bookmark buttons as shown in design reference */}
-        <div className="flex items-center justify-between mb-8 opacity-95">
+        <div className="flex items-center justify-end mb-8 opacity-95">
           <div className="flex items-center gap-2">
             {/* Share action button */}
             <button
