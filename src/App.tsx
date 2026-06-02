@@ -73,11 +73,11 @@ export default function App() {
       case 'false_love_signal_manga':
         return `${formattedTitle}虛假的戀愛訊號 - LINE Webtoon 耽美漫畫 | 玖伊枯 Joyqul 友情與愛情的假訊號 (joyqul.tw)`;
       case 'false_love_signal_r18':
-        return `虛假的戀愛訊號 R18 刪減番外篇 | 玖伊枯 (Joyqul) 中文同人耽美漫畫創作`;
+        return `虛假的戀愛訊號 R18 刪減番外篇 | 玖伊枯 (Joyqul) 中文耽美漫畫創作`;
       case 'false_love_signal_manga_sound':
         return `虛假的戀愛訊號 有配音廣播劇短片 / 友情與愛情的假訊號 影片 | 玖伊枯 (Joyqul) 出品`;
       case 'false_love_signal_ext':
-        return `虛假的戀愛訊號 幕後製作花絮與番外篇 | 玖伊枯 (Joyqul) 同人原創BL`;
+        return `虛假的戀愛訊號 幕後製作花絮與番外篇 | 玖伊枯 (Joyqul) 原創BL`;
       case 'false_love_signal_shorts':
         return `虛假的戀愛訊號 動態 YouTube Shorts 漫畫短影音集 | 玖伊枯 (Joyqul)`;
       case 'calculus_manga':
@@ -91,7 +91,7 @@ export default function App() {
       case 'joyqul_daily_manga':
         return `${formattedTitle}玖伊枯日常四格漫畫 | 玖伊枯 (Joyqul) 爆笑日常生活與創作花絮 (joyqul.tw)`;
       default:
-        return title ? `${title} - 玖伊枯 Joyqul BL耽美作品` : "玖伊枯 Joyqul 耽美原創同人插畫漫畫創作";
+        return title ? `${title} - 玖伊枯 Joyqul BL耽美作品` : "玖伊枯 Joyqul 耽美原創插畫漫畫創作";
     }
   };
 
@@ -111,7 +111,7 @@ export default function App() {
           <li><strong>玖伊枯日常四格</strong>：Joyqul 的爆笑個人日常生活與作畫花絮四格漫畫。</li>
         </ul>
         
-        <p>此網址 (joyqul.tw) 提供所有最新官方線上閱讀連結及同人延伸作品，包含 CXC R18 刪減特典、有配音的推廣影片、背景製作花絮、日常 Webtoon Shorts 影片等。是您追蹤 玖伊枯 (Joyqul) 系列巨作的第一首選入口。</p>
+        <p>此網址 (joyqul.tw) 提供所有最新官方線上閱讀連結及延伸作品，包含 CXC R18 刪減特典、有配音的推廣影片、背景製作花絮、日常 Webtoon Shorts 影片等。是您追蹤 玖伊枯 (Joyqul) 系列巨作的第一首選入口。</p>
       </div>
 
       {/* Dynamic Toast Popup */}
