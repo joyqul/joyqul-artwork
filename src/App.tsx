@@ -203,7 +203,7 @@ export default function App() {
                       href={art.linkUrl || "#"}
                       target={art.linkUrl ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="col-span-2 block relative w-full aspect-[16/9.5] sm:aspect-[16/9] rounded-3xl overflow-hidden shadow-[0_8px_24px_rgba(45,30,10,0.06)] border border-[#C2A978]/25 group cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] duration-300"
+                      className="col-span-2 block relative w-full aspect-[2/1] rounded-3xl overflow-hidden shadow-[0_8px_24px_rgba(45,30,10,0.06)] border border-[#C2A978]/25 group cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] duration-300"
                     >
                       {/* Background Artwork */}
                       <img
