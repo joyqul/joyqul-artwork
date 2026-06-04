@@ -34,6 +34,7 @@ function SeparateLine({ className = "" }: { className?: string }) {
 export default function App() {
   const [copied, setCopied] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('全部');
 
   // Read-only frontend state mapped from data file
   const data = INITIAL_PORTFOLIO_DATA;
@@ -234,10 +235,36 @@ export default function App() {
               })}
             </div>
 
+            {/* Status Filter Tabs */}
+            <div className="flex items-center justify-center gap-1.5 mt-8 p-1 bg-[#EEEDE9] rounded-full max-w-[280px] w-full self-center">
+              {['全部', '連載中', '已完結'].map((status) => {
+                const isActive = statusFilter === status;
+                return (
+                  <button
+                    key={status}
+                    onClick={() => setStatusFilter(status)}
+                    className={`flex-1 py-1.5 text-xs font-semibold rounded-full tracking-wider transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-white text-[#403C35] shadow-xs border border-[#C2A978]/15 font-bold' 
+                        : 'text-[#8C8372] hover:text-[#403C35]'
+                    }`}
+                  >
+                    {status}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Elegant Comic Series List */}
             <div className="w-full flex flex-col mt-2">
               {data.artworks
                 .filter((art) => art.canvasType === 'wide')
+                .filter((art) => {
+                  if (statusFilter === '全部') return true;
+                  const comicDetail = COMIC_DETAILS[art.id];
+                  const comicStatus = comicDetail?.status || art.status;
+                  return comicStatus === statusFilter;
+                })
                 .map((art) => {
                   const comicDetail = COMIC_DETAILS[art.id];
                   const comicTitle = comicDetail ? comicDetail.title : art.title;
