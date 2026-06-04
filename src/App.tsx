@@ -19,6 +19,17 @@ import {
 } from 'lucide-react';
 import { INITIAL_PORTFOLIO_DATA, COMIC_DETAILS } from './data';
 
+declare global {
+  interface Window {
+    dataLayer: any[];
+    gtag?: (...args: any[]) => void;
+  }
+}
+
+interface ImportMeta {
+  readonly env: Record<string, string | undefined>;
+}
+
 function SeparateLine({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center justify-center gap-1.5 w-full my-8 select-none ${className}`}>
@@ -150,6 +161,52 @@ export default function App() {
     } else {
       document.title = "玖伊枯 | 作品集 (joyqul.tw)";
     }
+  }, [selectedComicId, displayName]);
+
+  // Google Analytics secure dynamic loading & configuration
+  useEffect(() => {
+    const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    if (!gaId) return;
+
+    const scriptId = 'google-analytics-gtag';
+    const initScriptId = 'google-analytics-gtag-init';
+
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+      document.head.appendChild(script);
+
+      const scriptInit = document.createElement('script');
+      scriptInit.id = initScriptId;
+      scriptInit.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', '${gaId}', { 'anonymize_ip': true, 'cookie_flags': 'SameSite=None;Secure' });
+      `;
+      document.head.appendChild(scriptInit);
+    }
+  }, []);
+
+  // Securely dispatch page view events to Google Analytics upon route changes
+  useEffect(() => {
+    const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    if (!gaId || !window.gtag) return;
+
+    const pagePath = selectedComicId ? `#/comic/${selectedComicId}` : '/';
+    const pageTitle = selectedComicId && displayName 
+      ? `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集` 
+      : "玖伊枯 | 作品集";
+
+    window.gtag('config', gaId, {
+      page_path: pagePath,
+      page_title: pageTitle,
+      anonymize_ip: true,
+      cookie_flags: 'SameSite=None;Secure'
+    });
   }, [selectedComicId, displayName]);
 
   return (
