@@ -168,16 +168,7 @@ export default function App() {
     (art) => art.canvasType === 'normal' && art.id.startsWith(selectedComicId.split('_manga')[0])
   ) : [];
 
-  // Update browser tab title dynamically based on routing state
-  useEffect(() => {
-    if (selectedComicId && displayName) {
-      document.title = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集 (joyqul.tw)`;
-    } else {
-      document.title = "玖伊枯 | 作品集 (joyqul.tw)";
-    }
-  }, [selectedComicId, displayName]);
-
-  // Google Analytics secure dynamic loading & configuration
+  // Google Analytics secure dynamic loading & configuration without automatic default pageview
   useEffect(() => {
     const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
     if (!gaId) return;
@@ -199,28 +190,43 @@ export default function App() {
         function gtag(){dataLayer.push(arguments);}
         window.gtag = gtag;
         gtag('js', new Date());
-        gtag('config', '${gaId}', { 'anonymize_ip': true, 'cookie_flags': 'SameSite=None;Secure' });
+        gtag('config', '${gaId}', { 
+          'anonymize_ip': true, 
+          'cookie_flags': 'SameSite=None;Secure',
+          'send_page_view': false 
+        });
       `;
       document.head.appendChild(scriptInit);
     }
   }, []);
 
-  // Securely dispatch page view events to Google Analytics upon route changes
+  // Update browser tab title dynamically based on routing state & dispatch manual page_view events to GA
   useEffect(() => {
     const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    if (!gaId || !window.gtag) return;
-
+    
     const pagePath = selectedComicId ? `#/comic/${selectedComicId}` : '/';
     const pageTitle = selectedComicId && displayName 
       ? `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集` 
       : "玖伊枯 | 作品集";
 
-    window.gtag('config', gaId, {
-      page_path: pagePath,
-      page_title: pageTitle,
-      anonymize_ip: true,
-      cookie_flags: 'SameSite=None;Secure'
-    });
+    // Update document title first
+    if (selectedComicId && displayName) {
+      document.title = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集 (joyqul.tw)`;
+    } else {
+      document.title = "玖伊枯 | 作品集 (joyqul.tw)";
+    }
+
+    // Securely dispatch manual page view to Google Analytics if initialized
+    if (gaId && window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_title: pageTitle,
+        page_location: window.location.href,
+        page_path: pagePath,
+        send_to: gaId,
+        anonymize_ip: true,
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    }
   }, [selectedComicId, displayName]);
 
   return (
