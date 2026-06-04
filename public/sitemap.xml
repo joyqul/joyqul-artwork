@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Portal Home -->
   <url>
     <loc>https://joyqul.tw/</loc>
-    <lastmod>2026-06-03</lastmod>
+    <lastmod>2026-06-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <!-- 虛假的戀愛訊號 Separate Page -->
+  <url>
+    <loc>https://joyqul.tw/#/comic/false_love_signal_manga</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- 過氣男優的我竟然成為了微積分補教名師 Separate Page -->
+  <url>
+    <loc>https://joyqul.tw/#/comic/calculus_manga</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- 要怎麼跟龍談戀愛 Separate Page -->
+  <url>
+    <loc>https://joyqul.tw/#/comic/how_to_date_a_dragon_manga</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- 飄飄的非日常 (玖伊枯日常四格) Separate Page -->
+  <url>
+    <loc>https://joyqul.tw/#/comic/joyqul_daily_manga</loc>
+    <lastmod>2026-06-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

@@ -3,8 +3,39 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { PortfolioData } from './types';
+import { PortfolioData, ComicDetail } from './types';
 import  * as Assets from '../assets';
+
+export const COMIC_DETAILS: Record<string, ComicDetail> = {
+  'false_love_signal_manga': {
+    title: "虛假的戀愛訊號",
+    description: "「心動？這種非理性的衝動，不過是虛假的戀愛訊號。」 高能訊號工作室創辦人蕭薪澤一向這麼相信，直到他的學弟詹震銳闖入他的生活，讓他開始感到動搖⋯⋯",
+    status: "已完結",
+    tags: ["BL", "看似忠犬的腹黑學弟攻", "理工腦學長受", "職場戀愛"],
+    mainPlatform: "LINE Webtoon"
+  },
+  'calculus_manga': {
+    title: "過氣男優的我竟然成為了微積分補教名師",
+    description: "因為種種原因成為了GV男優的張証哲(25)面臨了過氣的問題，在遇到樓下的鄰居後，意外成為了微積分補教名師⋯⋯？！",
+    status: "已完結",
+    tags: ["BL", "忠犬又容易害羞的可愛學弟攻", "誘受學長"],
+    mainPlatform: "LINE Webtoon"
+  },
+  'how_to_date_a_dragon_manga': {
+    title: "要怎麼跟龍談戀愛",
+    description: "在全台最大同性交友軟體上滑到了⋯⋯台北大黑龍？！不是，是要怎麼跟龍談戀愛啦？！",
+    status: "連載中",
+    tags: ["BL", "天然撩學弟攻", "容易害羞學長受", "微奇幻"],
+    mainPlatform: "CxC"
+  },
+  'joyqul_daily_manga': {
+    title: "飄飄的非日常",
+    description: "用四格記錄一些根本不是日常會發生的事情。",
+    status: "連載中",
+    tags: ["日常四格"],
+    mainPlatform: "CxC"
+  }
+};
 
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   profile: {
@@ -62,7 +93,6 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       imageUrl: Assets.falseLoveSignalBanner,
       canvasType: "wide",
       status: "已完結",
-      tags: ["看似忠犬的腹黑學弟攻", "理工腦學長受"],
       linkUrl: "https://www.webtoons.com/zh-hant/bl-gl/false-love-signals/list?title_no=8065"
     },
     {
@@ -98,7 +128,6 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       title:"",
       imageUrl: Assets.calculusBanner,
       status: "已完結",
-      tags: ["忠犬又容易害羞的可愛學弟攻", "誘受學長"],
       canvasType: "wide",
       linkUrl: "https://www.webtoons.com/zh-hant/local/from-porn-star-to-calculus-teacher/list?title_no=4938"
     },
@@ -122,7 +151,6 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       imageUrl: Assets.howToDateADragonBanner,
       status: "連載中",
       canvasType: "wide",
-      tags: ["天然撩學弟攻", "容易害羞學長受"],
       linkUrl: "https://cxc.today/zh/@joyqul/book/25856"
     },
     {
@@ -131,7 +159,6 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       imageUrl: Assets.joyqulDaily,
       status:"連載中",
       canvasType:"wide",
-      tags: ["日常", "四格"],
       linkUrl: "https://cxc.today/zh/@joyqul/book/42711"
     }
   ],

@@ -37,6 +37,14 @@ export interface ProfileConfig {
   aboutMeLong: string;
 }
 
+export interface ComicDetail {
+  title: string;
+  description: string;
+  status: string;
+  tags: string[];
+  mainPlatform: string;
+}
+
 export interface PortfolioData {
   profile: ProfileConfig;
   socials: SocialLink[];
