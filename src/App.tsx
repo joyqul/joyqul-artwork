@@ -87,11 +87,25 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  // Secure dynamic click logger to Google Analytics
+  const trackClick = (elementId: string, elementText: string, extraParams = {}) => {
+    if (window.gtag) {
+      window.gtag('event', 'click_button_or_link', {
+        element_id: elementId,
+        element_text: elementText,
+        ...extraParams,
+        anonymize_ip: true,
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    }
+  };
+
   // Quick Share url trigger
   const triggerShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     showToast("網頁連結已複製到剪貼簿！");
+    trackClick('share_portal_button', '分享連結');
     setTimeout(() => setCopied(false), 2500);
   };
 
@@ -292,6 +306,7 @@ export default function App() {
                     href={soc.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackClick(`social_${soc.platform}`, soc.label, { url: soc.url })}
                     className="w-11 h-11 rounded-full flex items-center justify-center bg-transparent border border-[#C2A978]/40 hover:border-[#C2A978] text-[#BCA374] hover:bg-[#C2A978]/10 hover:shadow-xs hover:scale-105 duration-200 transition-all"
                     title={soc.label}
                   >
@@ -308,7 +323,10 @@ export default function App() {
                 return (
                   <button
                     key={status}
-                    onClick={() => setStatusFilter(status)}
+                    onClick={() => {
+                      setStatusFilter(status);
+                      trackClick(`filter_${status}`, `篩選狀態: ${status}`);
+                    }}
                     className={`flex-1 py-1.5 text-xs font-semibold rounded-full tracking-wider transition-all duration-300 ${
                       isActive 
                         ? 'bg-white text-[#403C35] shadow-xs border border-[#C2A978]/15 font-bold' 
@@ -343,7 +361,10 @@ export default function App() {
                       
                       {/* Interactive Showcase Card */}
                       <button
-                        onClick={() => navigateToComic(art.id)}
+                        onClick={() => {
+                          navigateToComic(art.id);
+                          trackClick(`comic_card_image_${art.id}`, `動態卡片: ${comicTitle}`);
+                        }}
                         className="block text-left relative w-full aspect-[2/1] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(45,30,10,0.06)] border border-[#C2A978]/25 group cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] duration-300"
                       >
                         {/* Background Artwork */}
@@ -376,7 +397,10 @@ export default function App() {
                       <div className="mt-4 flex flex-col items-start px-2">
                         <div className="flex flex-wrap items-center gap-2.5">
                           <button
-                            onClick={() => navigateToComic(art.id)}
+                            onClick={() => {
+                              navigateToComic(art.id);
+                              trackClick(`comic_card_title_${art.id}`, `卡片標題: ${comicTitle}`);
+                            }}
                             className="text-xl sm:text-2xl font-serif font-bold tracking-wide text-[#33302B] hover:text-[#BCA374] transition-colors text-left font-semibold"
                           >
                             {comicTitle}
@@ -418,7 +442,10 @@ export default function App() {
               {/* Navigation / Back header */}
               <div className="w-full flex items-center justify-between pb-4 border-b border-[#C2A978]/10 mb-6">
                 <button
-                  onClick={() => navigateToComic(null)}
+                  onClick={() => {
+                    navigateToComic(null);
+                    trackClick('back_to_home_top', '返回首頁');
+                  }}
                   className="flex items-center gap-1.5 group text-sm font-semibold text-[#8C8372] hover:text-[#403C35] transition-all bg-stone-100 hover:bg-stone-200/60 px-3.5 py-2 rounded-full shadow-xs"
                 >
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -430,6 +457,7 @@ export default function App() {
                   onClick={() => {
                     navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}${window.location.pathname}#/comic/${selectedComicId}`);
                     showToast(`已複製《${displayName || '作品'}》特別連結！`);
+                    trackClick(`share_comic_${selectedComicId}`, `分享作品: ${displayName}`);
                   }}
                   className="flex items-center gap-1.5 text-xs font-semibold text-[#BCA374] hover:text-[#A68F62] bg-[#C2A978]/8 hover:bg-[#C2A978]/15 px-3.5 py-2 rounded-full border border-[#C2A978]/15 transition-all shadow-xs"
                   title="分享此作品專頁"
@@ -505,6 +533,9 @@ export default function App() {
                   href={mainComic.linkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    trackClick(`main_reading_link_${mainComic.id}`, `線上連載: ${displayName}`, { url: mainComic.linkUrl });
+                  }}
                   className="w-full flex items-center justify-between p-4 rounded-2xl border border-[#C2A978]/30 bg-white hover:border-[#C2A978] hover:shadow-[0_8px_24px_rgba(194,169,120,0.08)] hover:-translate-y-[1px] transition-all duration-300 group"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
@@ -555,16 +586,19 @@ export default function App() {
                       href={subArt.linkUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => {
+                        trackClick(`sub_link_${subArt.id}`, `${label}: ${subArt.title}`, { url: subArt.linkUrl });
+                      }}
                       className="w-full flex items-center justify-between p-4 rounded-2xl border border-[#C2A978]/20 bg-white hover:border-[#C2A978] hover:shadow-[0_8px_24px_rgba(194,169,120,0.08)] hover:-translate-y-[1px] transition-all duration-300 group"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 bg-stone-100 border border-[#C2A978]/10">
                           <img
-                            src={subArt.imageUrl}
-                            alt={subArt.title}
-                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-                            referrerPolicy="no-referrer"
-                          />
+                              src={subArt.imageUrl}
+                              alt={subArt.title}
+                              className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+                              referrerPolicy="no-referrer"
+                            />
                         </div>
                         <div className="min-w-0 text-left">
                           <span className="text-[9px] font-bold tracking-wider text-[#8C8372] uppercase bg-[#FAF8F5] px-1.5 py-0.5 rounded border border-stone-200">
@@ -588,7 +622,10 @@ export default function App() {
 
               {/* Bottom Quick Escape Button */}
               <button
-                onClick={() => navigateToComic(null)}
+                onClick={() => {
+                  navigateToComic(null);
+                  trackClick('back_to_home_bottom', '返回官方作品集首頁');
+                }}
                 className="mt-12 w-full flex items-center justify-center gap-2 py-3 bg-[#FAF8F5] hover:bg-stone-100 text-sm font-semibold text-[#8C8372] hover:text-[#403C35] rounded-xl border border-dashed border-[#C2A978]/30 transition-all duration-200"
               >
                 <ArrowLeft className="w-4 h-4" />
