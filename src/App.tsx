@@ -143,6 +143,15 @@ export default function App() {
     (art) => art.canvasType === 'normal' && art.id.startsWith(selectedComicId.split('_manga')[0])
   ) : [];
 
+  // Update browser tab title dynamically based on routing state
+  useEffect(() => {
+    if (selectedComicId && displayName) {
+      document.title = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集 (joyqul.tw)`;
+    } else {
+      document.title = "玖伊枯 | 作品集 (joyqul.tw)";
+    }
+  }, [selectedComicId, displayName]);
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#403C35] font-sans pb-24 relative selection:bg-[#C2A978]/30 selection:text-[#403C35]">
       
