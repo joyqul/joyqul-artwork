@@ -394,7 +394,7 @@ export default function App() {
                         <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                           <span className="bg-white/95 backdrop-blur-xs text-[#403C35] text-xs font-bold px-4 py-2 rounded-full shadow-lg border border-[#C2A978]/20 flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform duration-300">
                             <BookOpen className="w-4 h-4 text-[#BCA374]" />
-                            看作品連結
+                            查看更多
                           </span>
                         </div>
                       </button>
@@ -433,6 +433,20 @@ export default function App() {
                             ))}
                           </div>
                         )}
+
+                        {/* Always visible '查看更多' link (especially optimized for mobile/touch screens) */}
+                        <button
+                          onClick={() => {
+                            navigateToComic(art.id);
+                            trackClick(`comic_card_link_${art.id}`, `查看更多: ${comicTitle}`);
+                          }}
+                          className="mt-3.5 inline-flex items-center gap-1.5 text-xs font-bold text-[#BCA374] hover:text-[#A68F62] transition-colors cursor-pointer group/link self-start"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span className="underline underline-offset-4 decoration-[#C2A978]/60 hover:decoration-[#C2A978] tracking-wider transition-colors">
+                            查看更多
+                          </span>
+                        </button>
                       </div>
                     </div>
                   );
