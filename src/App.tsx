@@ -600,6 +600,8 @@ export default function App() {
                     subDesc = "沒有配音但也還不錯";
                   }
 
+                  const finalDesc = subArt.description || subDesc;
+
                   return (
                     <a
                       key={subArt.id}
@@ -628,7 +630,7 @@ export default function App() {
                             {subArt.title}
                           </h4>
                           <p className="text-[11px] text-[#8F8778] truncate mt-0.5 max-w-[240px] sm:max-w-md font-sans">
-                            {subDesc}
+                            {finalDesc}
                           </p>
                         </div>
                       </div>

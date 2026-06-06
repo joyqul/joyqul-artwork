@@ -19,6 +19,7 @@ export interface Artwork {
   status?: string;
   tags?: string[];
   linkUrl?: string;
+  description?: string;
 }
 
 

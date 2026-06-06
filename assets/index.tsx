@@ -9,6 +9,8 @@ import falseLoveSignalShorts from './false_love_signal_shorts.webp';
 // @ts-ignore
 import falseLoveSignalSound from './false_love_signal_sound.webp';
 // @ts-ignore
+import falseLoveSignalTomokoreAU from './false_love_signal_tomokore_AU.webp';
+// @ts-ignore
 import calculusBanner from './calculus_banner.webp';
 // @ts-ignore
 import calculusR18 from './calculus_r18.webp';
@@ -27,6 +29,7 @@ export {
   falseLoveSignalR18,
   falseLoveSignalShorts,
   falseLoveSignalSound,
+  falseLoveSignalTomokoreAU,
   calculusBanner,
   calculusR18,
   calculusExt,

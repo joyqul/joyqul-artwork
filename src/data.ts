@@ -114,7 +114,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       title: "一些製作花絮",
       imageUrl: Assets.falseLoveSignalExt,
       canvasType: "normal",
-      linkUrl: "https://cxc.today/zh/@joyqul/book/42711"
+      linkUrl: "https://cxc.today/zh/@joyqul/book/42711",
+      description: "好奇配音製作花絮的可以來看看"
     },
     {
       id: "false_love_signal_shorts",
@@ -122,6 +123,14 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       imageUrl: Assets.falseLoveSignalShorts,
       canvasType: "normal",
       linkUrl: "https://www.youtube.com/watch?v=PUYdss5ib88&list=PL0nXJpHnI3EH7TbutAEbuIznpKhOnvcIm"
+    },
+    {
+      id: "false_love_signal_tomokore_au",
+      title: "朋友收集夢想生活 AU 影片",
+      imageUrl: Assets.falseLoveSignalTomokoreAU,
+      canvasType: "normal",
+      linkUrl: "https://www.youtube.com/playlist?list=PL0nXJpHnI3EGZ7lOvN43aHxNW6UIphbVB",
+      description: "Mii 版本的學長真的很可愛⋯⋯"
     },
     {
       id: "calculus_manga",
@@ -143,7 +152,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       title: "番外・經典同居30題！",
       imageUrl: Assets.calculusExt,
       canvasType: "normal",
-      linkUrl: "https://cxc.today/zh/@joyqul/book/3425"
+      linkUrl: "https://cxc.today/zh/@joyqul/book/3425",
+      description: "只畫了 15/30 的同居番外四格"
     },
     {
       id: "how_to_date_a_dragon_manga",
