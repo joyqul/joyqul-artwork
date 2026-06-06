@@ -159,7 +159,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       imageUrl: Assets.joyqulDaily,
       status:"連載中",
       canvasType:"wide",
-      linkUrl: "https://cxc.today/zh/@joyqul/book/42711"
+      linkUrl: "https://cxc.today/zh/@joyqul/book/253"
     }
   ],
 };
