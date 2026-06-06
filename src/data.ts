@@ -40,8 +40,8 @@ export const COMIC_DETAILS: Record<string, ComicDetail> = {
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   profile: {
     name: "玖伊枯（飄飄） 🇹🇼",
-    subheading: "斜槓畫 BL | 偶爾畫畫日常四格",
-    bio: "斜槓畫 BL \n偶爾畫畫日常四格",
+    subheading: "畫漫畫的時候叫玖伊枯，日常是飄飄",
+    bio: "畫漫畫的時候叫玖伊枯，日常是飄飄",
     tags: ["BL / 耽美", "日常四格"],
     avatarUrl: Assets.joyqulAvatar, 
     bannerUrl: "",
