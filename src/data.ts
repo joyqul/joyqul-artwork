@@ -11,14 +11,14 @@ export const COMIC_DETAILS: Record<string, ComicDetail> = {
     title: "虛假的戀愛訊號",
     description: "「心動？這種非理性的衝動，不過是虛假的戀愛訊號。」 高能訊號工作室創辦人蕭薪澤一向這麼相信，直到他的學弟詹震銳闖入他的生活，讓他開始感到動搖⋯⋯",
     status: "已完結",
-    tags: ["BL", "看似忠犬的腹黑學弟攻", "理工腦學長受", "職場戀愛"],
+    tags: ["BL", "商業連載", "看似忠犬的腹黑學弟攻", "理工腦學長受", "職場戀愛"],
     mainPlatform: "LINE Webtoon"
   },
   'calculus_manga': {
     title: "過氣男優的我竟然成為了微積分補教名師",
     description: "因為種種原因成為了GV男優的張証哲(25)面臨了過氣的問題，在遇到樓下的鄰居後，意外成為了微積分補教名師⋯⋯？！",
     status: "已完結",
-    tags: ["BL", "忠犬又容易害羞的可愛學弟攻", "誘受學長"],
+    tags: ["BL", "商業連載", "忠犬又容易害羞的可愛學弟攻", "誘受學長"],
     mainPlatform: "LINE Webtoon"
   },
   'how_to_date_a_dragon_manga': {
@@ -40,8 +40,8 @@ export const COMIC_DETAILS: Record<string, ComicDetail> = {
 export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   profile: {
     name: "玖伊枯（飄飄） 🇹🇼",
-    subheading: "畫漫畫的時候叫玖伊枯，日常是飄飄",
-    bio: "畫漫畫的時候叫玖伊枯，日常是飄飄",
+    subheading: "畫BL漫畫的時候叫玖伊枯，日常是飄飄",
+    bio: "畫BL漫畫的時候叫玖伊枯，日常是飄飄",
     tags: ["BL / 耽美", "日常四格"],
     avatarUrl: Assets.joyqulAvatar, 
     bannerUrl: "",
