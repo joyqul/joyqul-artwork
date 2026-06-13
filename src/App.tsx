@@ -100,9 +100,19 @@ export default function App() {
     }
   };
 
+  // Helper to generate a clean, web-crawler friendly URL that works with static landing directories
+  const getCleanShareUrl = (comicId: string | null) => {
+    const baseDir = window.location.pathname.endsWith('/') ? window.location.pathname : `${window.location.pathname}/`;
+    if (!comicId) {
+      return `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+    }
+    return `${window.location.protocol}//${window.location.host}${baseDir}comic/${comicId}`;
+  };
+
   // Quick Share url trigger
   const triggerShare = () => {
-    navigator.clipboard.writeText(window.location.href);
+    const shareUrl = getCleanShareUrl(selectedComicId);
+    navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     showToast("網頁連結已複製到剪貼簿！");
     trackClick('share_portal_button', '分享連結');
@@ -208,6 +218,20 @@ export default function App() {
     const pageTitle = selectedComicId && displayName 
       ? `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集` 
       : "玖伊枯 | 作品集";
+    
+    const pageDesc = selectedComicId && displayName
+      ? `《${displayName}》線上連載以及其他連結。${detail?.description || mainComic?.description || ''}`
+      : "台灣BL漫畫家玖伊枯的個人官方網站與作品集門戶。收錄熱門連載代表作：《虛假的戀愛訊號》、《過氣男優的我竟然成為了微積分補教名師》、《要怎麼跟龍談戀愛》閱讀渠道與最新延伸作畫日常。";
+
+    // Obtain image URL from the current comic data fallback to default avatar
+    const rawImage = mainComic?.imageUrl || '/assets/joyqul_avatar.webp';
+    const pageImage = rawImage.startsWith('http') 
+      ? rawImage 
+      : `https://joyqul.tw${rawImage.startsWith('/') ? '' : '/'}${rawImage}`;
+
+    const pageUrl = selectedComicId 
+      ? `https://joyqul.tw/#/comic/${selectedComicId}`
+      : 'https://joyqul.tw/';
 
     // Update document title first
     if (selectedComicId && displayName) {
@@ -215,6 +239,27 @@ export default function App() {
     } else {
       document.title = "玖伊枯 | 作品集 (joyqul.tw)";
     }
+
+    // Helper function to dynamically update or create meta elements in head (highly effective for JS-capable parsers)
+    const updateMeta = (nameOrProperty: string, content: string, isName = false) => {
+      const attr = isName ? 'name' : 'property';
+      let el = document.querySelector(`meta[${attr}="${nameOrProperty}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, nameOrProperty);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+
+    updateMeta('og:title', pageTitle);
+    updateMeta('og:description', pageDesc);
+    updateMeta('og:image', pageImage);
+    updateMeta('og:url', pageUrl);
+    updateMeta('twitter:title', pageTitle, true);
+    updateMeta('twitter:description', pageDesc, true);
+    updateMeta('twitter:image', pageImage, true);
+    updateMeta('description', pageDesc, true);
 
     // Securely dispatch manual page view to Google Analytics if initialized
     if (gaId && window.gtag) {
@@ -227,7 +272,7 @@ export default function App() {
         cookie_flags: 'SameSite=None;Secure'
       });
     }
-  }, [selectedComicId, displayName]);
+  }, [selectedComicId, displayName, detail, mainComic]);
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#403C35] font-sans pb-24 relative selection:bg-[#C2A978]/30 selection:text-[#403C35]">
@@ -475,8 +520,9 @@ export default function App() {
                 {/* Share specifically for this comic */}
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}${window.location.pathname}#/comic/${selectedComicId}`);
-                    showToast(`已複製《${displayName || '作品'}》特別連結！`);
+                    const shareUrl = getCleanShareUrl(selectedComicId);
+                    navigator.clipboard.writeText(shareUrl);
+                    showToast(`已複製《${displayName || '作品'}》特別連結，可分享至社群平台！`);
                     trackClick(`share_comic_${selectedComicId}`, `分享作品: ${displayName}`);
                   }}
                   className="flex items-center gap-1.5 text-xs font-semibold text-[#BCA374] hover:text-[#A68F62] bg-[#C2A978]/8 hover:bg-[#C2A978]/15 px-3.5 py-2 rounded-full border border-[#C2A978]/15 transition-all shadow-xs"
