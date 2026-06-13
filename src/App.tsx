@@ -50,33 +50,62 @@ export default function App() {
   // Read-only frontend state mapped from data file
   const data = INITIAL_PORTFOLIO_DATA;
 
-  // Single-page hash router state
+  // Single-page hybrid router supporting both clean path slugs and fallback hashes
   const [selectedComicId, setSelectedComicId] = useState<string | null>(() => {
     const hash = window.location.hash;
+    const path = window.location.pathname;
     if (hash.startsWith('#/comic/')) {
       return hash.replace('#/comic/', '');
+    }
+    const pathMatch = path.match(/\/comic\/([^/]+)/);
+    if (pathMatch) {
+      return pathMatch[1];
     }
     return null;
   });
 
+  // Seamlessly transition starting hash fragments to beautiful clean subdirectories in address bar
   useEffect(() => {
-    const handleHashChange = () => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#/comic/')) {
+      const id = hash.replace('#/comic/', '');
+      window.history.replaceState(null, '', `/comic/${id}/`);
+    } else if (selectedComicId) {
+      // Keep URL perfectly aligned with static directory slug paths
+      window.history.replaceState(null, '', `/comic/${selectedComicId}/`);
+    } else {
+      window.history.replaceState(null, '', '/');
+    }
+  }, [selectedComicId]);
+
+  useEffect(() => {
+    const handlePopState = () => {
       const hash = window.location.hash;
-      if (hash.startsWith('#/comic/')) {
-        setSelectedComicId(hash.replace('#/comic/', ''));
-      } else {
-        setSelectedComicId(null);
+      const path = window.location.pathname;
+      let matchedId: string | null = null;
+      
+      const pathMatch = path.match(/\/comic\/([^/]+)/);
+      if (pathMatch) {
+        matchedId = pathMatch[1];
+      } else if (hash.startsWith('#/comic/')) {
+        matchedId = hash.replace('#/comic/', '');
       }
+      setSelectedComicId(matchedId);
     };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
   }, []);
 
   const navigateToComic = (id: string | null) => {
     if (id) {
-      window.location.hash = `#/comic/${id}`;
+      window.history.pushState(null, '', `/comic/${id}/`);
     } else {
-      window.location.hash = '';
+      window.history.pushState(null, '', '/');
     }
     setSelectedComicId(id);
     window.scrollTo({ top: 0, behavior: 'instant' as any });
@@ -214,7 +243,7 @@ export default function App() {
   useEffect(() => {
     const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
     
-    const pagePath = selectedComicId ? `#/comic/${selectedComicId}` : '/';
+    const pagePath = selectedComicId ? `/comic/${selectedComicId}/` : '/';
     const pageTitle = selectedComicId && displayName 
       ? `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集` 
       : "玖伊枯 | 作品集";
@@ -240,7 +269,7 @@ export default function App() {
       : `https://joyqul.tw/${cleanAssetPath}`;
 
     const pageUrl = selectedComicId 
-      ? `https://joyqul.tw/#/comic/${selectedComicId}`
+      ? `https://joyqul.tw/comic/${selectedComicId}/`
       : 'https://joyqul.tw/';
 
     // Update document title first
