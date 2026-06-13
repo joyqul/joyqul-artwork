@@ -107,7 +107,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       title: "有配音的酷東西",
       imageUrl: Assets.falseLoveSignalSound,
       canvasType: "normal",
-      linkUrl: "https://www.youtube.com/watch?v=iktXUHBo1b4&list=PL0nXJpHnI3EEzm8hQu7GNCWkIJyF2exIO"
+      linkUrl: "https://www.youtube.com/playlist?list=PL0nXJpHnI3EEzm8hQu7GNCWkIJyF2exIO"
     },
     {
       id: "false_love_signal_ext",
@@ -122,7 +122,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       title: "Shorts",
       imageUrl: Assets.falseLoveSignalShorts,
       canvasType: "normal",
-      linkUrl: "https://www.youtube.com/watch?v=PUYdss5ib88&list=PL0nXJpHnI3EH7TbutAEbuIznpKhOnvcIm"
+      linkUrl: "https://www.youtube.com/playlist?list=PL0nXJpHnI3EH7TbutAEbuIznpKhOnvcIm"
     },
     {
       id: "false_love_signal_tomokore_au",
