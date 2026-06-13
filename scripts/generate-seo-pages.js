@@ -55,7 +55,7 @@ const comics = [
 comics.forEach(comic => {
   const pageImageRelative = resolveHashedAsset(comic.imagePrefix);
   const pageImageUrl = `https://joyqul.tw${pageImageRelative}`;
-  const pageUrl = `https://joyqul.tw/comic/${comic.id}`;
+  const pageUrl = `https://joyqul.tw/comic/${comic.id}/`;
   
   const seoHtml = `<!doctype html>
 <html lang="zh-Hant">

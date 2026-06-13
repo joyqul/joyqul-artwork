@@ -106,7 +106,7 @@ export default function App() {
     if (!comicId) {
       return `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
     }
-    return `${window.location.protocol}//${window.location.host}${baseDir}comic/${comicId}`;
+    return `${window.location.protocol}//${window.location.host}${baseDir}comic/${comicId}/`;
   };
 
   // Quick Share url trigger
@@ -225,9 +225,19 @@ export default function App() {
 
     // Obtain image URL from the current comic data fallback to default avatar
     const rawImage = mainComic?.imageUrl || '/assets/joyqul_avatar.webp';
+    
+    // Normalize path to strip './' or double leading slashes which confuse social crawlers and search index bots
+    let cleanAssetPath = rawImage;
+    if (cleanAssetPath.startsWith('./')) {
+      cleanAssetPath = cleanAssetPath.substring(2);
+    }
+    if (cleanAssetPath.startsWith('/')) {
+      cleanAssetPath = cleanAssetPath.substring(1);
+    }
+    
     const pageImage = rawImage.startsWith('http') 
       ? rawImage 
-      : `https://joyqul.tw${rawImage.startsWith('/') ? '' : '/'}${rawImage}`;
+      : `https://joyqul.tw/${cleanAssetPath}`;
 
     const pageUrl = selectedComicId 
       ? `https://joyqul.tw/#/comic/${selectedComicId}`
