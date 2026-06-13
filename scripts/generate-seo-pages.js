@@ -62,7 +62,7 @@ comics.forEach(comic => {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/webp" href="/assets/joyqul_avatar.webp" />
+    <link rel="icon" type="image/webp" href="${resolveHashedAsset('joyqul_avatar')}" />
     
     <!-- Primary Search Engine Optimization (SEO) Metadata -->
     <title>${comic.title}</title>
@@ -100,10 +100,19 @@ comics.forEach(comic => {
 </html>
 `;
 
-  // Ensure directory structures match target requirements
+// Ensure directory structures match target requirements
   const outputDir = path.join(distDir, 'comic', comic.id);
   fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(path.join(outputDir, 'index.html'), seoHtml);
 });
+
+// Copy original non-hashed joyqul_avatar.webp to dist/assets/ as a robust static fallback
+const sourceAvatar = path.join(process.cwd(), 'assets', 'joyqul_avatar.webp');
+const targetAvatar = path.join(distDir, 'assets', 'joyqul_avatar.webp');
+if (fs.existsSync(sourceAvatar)) {
+  fs.mkdirSync(path.dirname(targetAvatar), { recursive: true });
+  fs.copyFileSync(sourceAvatar, targetAvatar);
+  console.log("Successfully copied static joyqul_avatar.webp fallback to dist/assets/");
+}
 
 console.log("SEO Landing Pages build successfully completed!");
