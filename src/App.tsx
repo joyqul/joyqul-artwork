@@ -131,9 +131,16 @@ export default function App() {
 
   // Helper to generate a clean, web-crawler friendly URL that works with static landing directories
   const getCleanShareUrl = (comicId: string | null) => {
-    const baseDir = window.location.pathname.endsWith('/') ? window.location.pathname : `${window.location.pathname}/`;
+    let basePath = window.location.pathname;
+    const comicIndex = basePath.indexOf('/comic/');
+    if (comicIndex !== -1) {
+      basePath = basePath.substring(0, comicIndex);
+    }
+    
+    const baseDir = basePath.endsWith('/') ? basePath : `${basePath}/`;
+    
     if (!comicId) {
-      return `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+      return `${window.location.protocol}//${window.location.host}${basePath || '/'}`;
     }
     return `${window.location.protocol}//${window.location.host}${baseDir}comic/${comicId}/`;
   };
