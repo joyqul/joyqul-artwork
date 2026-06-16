@@ -21,6 +21,8 @@ import joyqulAvatar from './joyqul_avatar.webp';
 // @ts-ignore
 import joyqulDaily from './joyqul_daily.webp';
 // @ts-ignore
+import joyqulDailyShorts from './joyqul_daily_shorts.webp';
+// @ts-ignore
 import howToDateADragonBanner from './how_to_date_a_dragon_banner.webp';
 
 export {
@@ -35,5 +37,6 @@ export {
   calculusExt,
   joyqulAvatar,
   joyqulDaily,
+  joyqulDailyShorts,
   howToDateADragonBanner
 };

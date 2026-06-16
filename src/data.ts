@@ -170,6 +170,13 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       status:"連載中",
       canvasType:"wide",
       linkUrl: "https://cxc.today/zh/@joyqul/book/253"
+    },
+    {
+      id: "joyqul_daily_shorts",
+      title: "Shorts",
+      imageUrl: Assets.joyqulDailyShorts,
+      canvasType: "normal",
+      linkUrl: "https://www.youtube.com/playlist?list=PL0nXJpHnI3EGqmBB9exT8lx7NFoY19Ruk"
     }
   ],
 };
