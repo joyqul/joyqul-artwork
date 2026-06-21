@@ -44,14 +44,15 @@ export default function App() {
   const [isQuizActive, setIsQuizActive] = useState<boolean>(() => {
     const hash = window.location.hash;
     const path = window.location.pathname;
-    return hash === '#/quiz' || hash.startsWith('#/quiz/') || path.includes('/quiz');
+    return hash.startsWith('#/quiz') || path.includes('/quiz');
   });
 
   const [selectedComicId, setSelectedComicId] = useState<string | null>(() => {
     const hash = window.location.hash;
     const path = window.location.pathname;
     if (hash.startsWith('#/comic/')) {
-      return hash.replace('#/comic/', '');
+      const cleanHash = hash.split('?')[0];
+      return cleanHash.replace('#/comic/', '');
     }
     const pathMatch = path.match(/\/comic\/([^/]+)/);
     if (pathMatch) {
@@ -63,22 +64,32 @@ export default function App() {
   // Seamlessly transition starting hash fragments to beautiful clean subdirectories in address bar
   useEffect(() => {
     const hash = window.location.hash;
+    const search = window.location.search;
+    
+    // Also parse hash search params if present: e.g. /#/quiz?result=calculus_manga
+    let hashSearch = '';
+    const hashSearchIdx = hash.indexOf('?');
+    if (hashSearchIdx !== -1) {
+      hashSearch = hash.substring(hashSearchIdx);
+    }
+    const finalSearch = search || hashSearch;
+
     if (hash.startsWith('#/comic/')) {
-      const id = hash.replace('#/comic/', '');
-      window.history.replaceState(null, '', `/comic/${id}/`);
+      const id = hash.split('?')[0].replace('#/comic/', '');
+      window.history.replaceState(null, '', `/comic/${id}/${finalSearch}`);
       setSelectedComicId(id);
       setIsQuizActive(false);
-    } else if (hash === '#/quiz' || hash.startsWith('#/quiz/')) {
-      window.history.replaceState(null, '', `/quiz/`);
+    } else if (hash.startsWith('#/quiz')) {
+      window.history.replaceState(null, '', `/quiz/${finalSearch}`);
       setIsQuizActive(true);
       setSelectedComicId(null);
     } else if (isQuizActive) {
-      window.history.replaceState(null, '', '/quiz/');
+      window.history.replaceState(null, '', `/quiz/${finalSearch}`);
     } else if (selectedComicId) {
       // Keep URL perfectly aligned with static directory slug paths
-      window.history.replaceState(null, '', `/comic/${selectedComicId}/`);
+      window.history.replaceState(null, '', `/comic/${selectedComicId}/${finalSearch}`);
     } else {
-      window.history.replaceState(null, '', '/');
+      window.history.replaceState(null, '', `/${finalSearch}`);
     }
   }, [selectedComicId, isQuizActive]);
 
@@ -87,7 +98,7 @@ export default function App() {
       const hash = window.location.hash;
       const path = window.location.pathname;
       
-      if (path.includes('/quiz') || hash === '#/quiz' || hash.startsWith('#/quiz/')) {
+      if (path.includes('/quiz') || hash.startsWith('#/quiz')) {
         setIsQuizActive(true);
         setSelectedComicId(null);
         return;
@@ -99,7 +110,8 @@ export default function App() {
       if (pathMatch) {
         matchedId = pathMatch[1];
       } else if (hash.startsWith('#/comic/')) {
-        matchedId = hash.replace('#/comic/', '');
+        const cleanHash = hash.split('?')[0];
+        matchedId = cleanHash.replace('#/comic/', '');
       }
       setSelectedComicId(matchedId);
     };

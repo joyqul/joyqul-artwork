@@ -234,10 +234,10 @@
           
           let spaTarget = window.location.protocol + '//' + window.location.host;
           if (isQuiz) {
-            spaTarget += '/#/quiz';
+            spaTarget += '/#/quiz' + window.location.search;
           } else {
             const comicId = pathMatch[1];
-            spaTarget += '/#/comic/' + comicId;
+            spaTarget += '/#/comic/' + comicId + window.location.search;
           }
           
           // Redirect to the React index page with correct target hash router pathing after a brief moment

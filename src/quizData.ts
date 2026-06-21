@@ -53,7 +53,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       {
         text: '不想要感情線',
         scores: {
-          'joyqul_daily_manga': 40
+          'joyqul_daily_manga': 20
         }
       }
     ]

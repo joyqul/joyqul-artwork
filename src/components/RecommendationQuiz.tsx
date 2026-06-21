@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle, Share2, Check } from 'lucide-react';
 import { QUIZ_QUESTIONS, QuizQuestion, QuizOption } from '../quizData';
 import { Artwork, ComicDetail } from '../types';
 
@@ -28,6 +28,37 @@ export function RecommendationQuiz({
   onTrackClick,
   getArtworkAltText
 }: RecommendationQuizProps) {
+  // Check if a shared result is provided in URL query or hash query
+  const getSharedResultFromUrl = (): string | null => {
+    // 1. Check window.location.search
+    const searchParams = new URLSearchParams(window.location.search);
+    let res = searchParams.get('result');
+    if (res && RESULT_DESCRIPTIONS[res]) {
+      return res;
+    }
+
+    // 2. Check hash query if URL is handled via Hash Router / Hash fallbacks
+    // e.g., /#/quiz?result=calculus_manga
+    const hash = window.location.hash;
+    const hashSearchIdx = hash.indexOf('?');
+    if (hashSearchIdx !== -1) {
+      const hashParams = new URLSearchParams(hash.substring(hashSearchIdx));
+      res = hashParams.get('result');
+      if (res && RESULT_DESCRIPTIONS[res]) {
+        return res;
+      }
+    }
+    return null;
+  };
+
+  const [sharedResultId, setSharedResultId] = useState<string | null>(() => {
+    return getSharedResultFromUrl();
+  });
+
+  const [hasTakenQuiz, setHasTakenQuiz] = useState<boolean>(() => {
+    return getSharedResultFromUrl() === null;
+  });
+
   const [activeQuestions, setActiveQuestions] = useState<QuizQuestion[]>([]);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [totalScores, setTotalScores] = useState<Record<string, number>>({
@@ -36,15 +67,34 @@ export function RecommendationQuiz({
     'how_to_date_a_dragon_manga': 0,
     'joyqul_daily_manga': 0
   });
-  const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
-  const [matchPercentage, setMatchPercentage] = useState<number>(95);
+  const [quizCompleted, setQuizCompleted] = useState<boolean>(() => {
+    return getSharedResultFromUrl() !== null;
+  });
+  const [matchPercentage, setMatchPercentage] = useState<number>(() => {
+    return Math.floor(Math.random() * 5) + 95; // 95% - 99%
+  });
 
   // Initialize quiz by selecting 3-4 random questions to make it speedy and fun
   useEffect(() => {
-    initializeQuiz();
+    // Only run normal shuffle init if there's no active shared result
+    const sharedId = getSharedResultFromUrl();
+    if (!sharedId) {
+      initializeQuiz(false);
+    } else {
+      setQuizCompleted(true);
+      setSharedResultId(sharedId);
+      setHasTakenQuiz(false);
+    }
   }, []);
 
-  const initializeQuiz = () => {
+  const initializeQuiz = (clearUrl = false) => {
+    // Clear URL query parameter ONLY if explicitly requested (e.g., clicking re-take)
+    if (clearUrl && window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', '/quiz/');
+    }
+    setSharedResultId(null);
+    setHasTakenQuiz(true);
+
     // Shuffling the questions using Durstenfeld shuffle alg
     const shuffled = [...QUIZ_QUESTIONS];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -61,6 +111,7 @@ export function RecommendationQuiz({
       'joyqul_daily_manga': 0
     });
     setQuizCompleted(false);
+    setMatchPercentage(Math.floor(Math.random() * 5) + 95);
   };
 
   const handleOptionSelect = (option: QuizOption) => {
@@ -81,14 +132,36 @@ export function RecommendationQuiz({
       setCurrentStep(prev => prev + 1);
     } else {
       // Complete! Generate a match percentage between 93% and 99% for fun
-      setMatchPercentage(Math.floor(Math.random() * 7) + 93);
+      const percentage = Math.floor(Math.random() * 7) + 93;
+      setMatchPercentage(percentage);
+      
+      // Track best result
+      let bestComicId = 'false_love_signal_manga';
+      let highestScore = -999;
+      Object.entries(updatedScores).forEach(([comicId, score]) => {
+        const numScore = score as number;
+        if (numScore > highestScore) {
+          highestScore = numScore;
+          bestComicId = comicId;
+        }
+      });
+
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, '', `/quiz/?result=${bestComicId}`);
+      }
+
+      setHasTakenQuiz(true);
       setQuizCompleted(true);
-      onTrackClick('quiz_completion', '完成推薦測驗');
+      onTrackClick('quiz_completion', `完成推薦測驗: ${bestComicId}`);
     }
   };
 
   // Find the comic with the highest score
   const getMatchingComicId = (): string => {
+    if (sharedResultId && RESULT_DESCRIPTIONS[sharedResultId]) {
+      return sharedResultId;
+    }
+
     let bestComicId = 'false_love_signal_manga';
     let highestScore = -999;
 
@@ -108,22 +181,95 @@ export function RecommendationQuiz({
   const matchingDetail = comicDetails[matchingComicId];
   const comicTitle = matchingDetail ? matchingDetail.title : (matchingComic?.title || "");
 
+  const [copiedResult, setCopiedResult] = useState<boolean>(false);
+  const [copiedQuiz, setCopiedQuiz] = useState<boolean>(false);
+
+  const handleShareResult = async () => {
+    const origin = window.location.origin;
+    const shareUrl = `${origin}/quiz/?result=${matchingComicId}`;
+    const shareText = `🔮 玖伊枯作品集｜命定推薦測驗\n我的命定契合代表作是：《${comicTitle}》！\n✨ 工人智慧契合度高達 ${matchPercentage}%！\n\n「${RESULT_DESCRIPTIONS[matchingComicId] || ''}」\n\n快來看看你跟哪部最契合吧：\n👉 ${shareUrl}`;
+    
+    // Check if web share API is supported
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `命定推薦代表作：《${comicTitle}》`,
+          text: shareText,
+          url: shareUrl
+        });
+        onTrackClick('quiz_share_result_api', `分享結果成功: ${comicTitle}`);
+        return;
+      } catch (err) {
+        // User cancelled or share failed, fallback quietly to clipboard copy
+        console.log('Share result API cancelled or fallback copied:', err);
+      }
+    }
+
+    // Clipboard copy fallback
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopiedResult(true);
+      onTrackClick('quiz_share_result_copy', `複製分享結果: ${comicTitle}`);
+      setTimeout(() => setCopiedResult(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const handleShareQuiz = async () => {
+    const origin = window.location.origin;
+    const shareUrl = `${origin}/quiz/`;
+    const shareText = `🔮 玖伊枯作品集｜命定推薦測驗\n回答幾個簡單的趣味選擇對決，瞬間算出你的命定耽美/常溫原創漫畫代表作！\n👉 ${shareUrl}`;
+    
+    // Check if web share API is supported
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `玖伊枯命定推薦測驗`,
+          text: shareText,
+          url: shareUrl
+        });
+        onTrackClick('quiz_share_quiz_api', `分享測驗成功`);
+        return;
+      } catch (err) {
+        console.log('Share quiz API cancelled or fallback copied:', err);
+      }
+    }
+
+    // Clipboard copy fallback
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setCopiedQuiz(true);
+      onTrackClick('quiz_share_quiz_copy', `複製分享測驗連結`);
+      setTimeout(() => setCopiedQuiz(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col items-center mt-2 page-view-animation">
       {/* Top Bar Navigation */}
       <div className="w-full flex items-center justify-between pb-4 border-b border-[#C2A978]/10 mb-8">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 group text-sm font-semibold text-[#8C8372] hover:text-[#403C35] transition-all bg-stone-100 hover:bg-stone-200/60 px-3.5 py-2 rounded-full shadow-xs"
+          className="flex items-center gap-1.5 group text-sm font-semibold text-[#8C8372] hover:text-[#403C35] transition-all bg-stone-100 hover:bg-stone-200/60 px-3.5 py-2 rounded-full shadow-xs cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
           <span>返回首頁</span>
         </button>
 
-        <span className="text-xs font-bold text-[#C2A978] tracking-widest uppercase bg-[#C2A978]/8 px-3 py-1.5 rounded-full border border-[#C2A978]/15 flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-[#C2A978]" />
-          測驗推薦頁面
-        </span>
+        <button
+          onClick={handleShareQuiz}
+          className={`flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-full border transition-all cursor-pointer text-xs font-bold tracking-wider shrink-0 ${
+            copiedQuiz
+              ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
+              : 'border-[#C2A978]/60 hover:border-[#C2A978] bg-[#C2A978]/4 text-[#BCA374] hover:text-[#A68F62]'
+          }`}
+        >
+          {copiedQuiz ? <Check className="w-3.5 h-3.5 shrink-0" /> : <Share2 className="w-3.5 h-3.5 shrink-0" />}
+          <span className="truncate">{copiedQuiz ? '已複製連結！' : '分享此測驗'}</span>
+        </button>
       </div>
 
       {!quizCompleted ? (
@@ -194,16 +340,18 @@ export function RecommendationQuiz({
               </span>
             </div>
 
-            <span className="text-[11px] font-extrabold tracking-widest text-[#C2A978] uppercase bg-[#C2A978]/10 px-3.5 py-1.5 rounded-full border border-[#C2A978]/15 mb-3">
-              YOUR DESTINY MATCH
+            <span className="text-[11px] font-extrabold tracking-widest text-[#C2A978] uppercase bg-[#C2A978]/10 px-3.5 py-1.5 rounded-full border border-[#C2A978]/15 mb-3 select-none">
+              {hasTakenQuiz ? 'YOUR DESTINY MATCH' : 'FRIEND\'S RECOMMENDATION'}
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-serif font-extrabold tracking-wide text-[#33302B] mb-2 text-center">
-              {matchPercentage}% 命定契合度！
+              {hasTakenQuiz ? `${matchPercentage}% 命定契合度！` : '朋友最愛的契合代表作！'}
             </h2>
             
             <p className="text-xs text-[#8C8372] mb-6 tracking-wide text-center">
-              經過工人智慧的演算，推薦給你的作品是：
+              {hasTakenQuiz 
+                ? '經過工人智慧的演算，推薦給你的作品是：' 
+                : `他的測驗結果與《${comicTitle}》高度契合達 ${matchPercentage}%！`}
             </p>
 
             {/* Interactive Matching Card */}
@@ -260,28 +408,68 @@ export function RecommendationQuiz({
             </div>
 
             {/* CTAs */}
-            <div className="w-full flex flex-col sm:flex-row gap-3 mt-8">
-              <button
-                onClick={() => {
-                  onSelectComic(matchingComicId);
-                  onTrackClick('quiz_result_action_go', `直接看爆作品: ${comicTitle}`);
-                }}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 px-4 rounded-full bg-gradient-to-r from-[#C2A978] to-[#DFCBB4] hover:from-[#BCA374] hover:to-[#DFC29E] text-white font-extrabold text-xs sm:text-sm tracking-wider shadow-sm hover:shadow-md transition-all cursor-pointer active:scale-[0.99]"
-              >
-                <span>直接看爆這部作品</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
+            <div className="w-full flex flex-col gap-3 mt-8">
+              {/* Primary Call To Action */}
+              {hasTakenQuiz ? (
+                <button
+                  onClick={() => {
+                    onSelectComic(matchingComicId);
+                    onTrackClick('quiz_result_action_go', `直接看爆作品: ${comicTitle}`);
+                  }}
+                  className="w-full flex items-center justify-center gap-1.5 py-3.5 px-4 rounded-full bg-gradient-to-r from-[#C2A978] to-[#DFCBB4] hover:from-[#BCA374] hover:to-[#DFC29E] text-white font-extrabold text-xs sm:text-sm tracking-wider shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99]"
+                >
+                  <span>直接看爆這部作品</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" className="shrink-0">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  onClick={initializeQuiz}
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-full bg-gradient-to-r from-[#C2A978] to-[#DFCBB4] hover:from-[#BCA374] hover:to-[#DFC29E] text-white font-extrabold text-xs sm:text-sm tracking-widest shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99] animate-pulse"
+                >
+                  <Sparkles className="w-4 h-4 text-white" />
+                  <span>我也要測測看！</span>
+                </button>
+              )}
 
-              <button
-                onClick={initializeQuiz}
-                className="flex items-center justify-center gap-1.5 py-3.5 px-5 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs transition-all cursor-pointer active:scale-[0.99]"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>重新測驗</span>
-              </button>
+              {/* Grid of Secondary Sharing/Action buttons */}
+              <div className="grid grid-cols-2 gap-2.5 w-full">
+                {/* Button A: Share / Copy Result */}
+                <button
+                  onClick={handleShareResult}
+                  className={`flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border transition-all cursor-pointer active:scale-[0.99] font-bold text-xs sm:text-sm tracking-wide shrink-0 ${
+                    copiedResult
+                      ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
+                      : 'border-[#C2A978]/60 hover:border-[#C2A978] bg-[#C2A978]/4 text-[#BCA374] hover:text-[#A68F62]'
+                  }`}
+                >
+                  {copiedResult ? <Check className="w-4 h-4 shrink-0" /> : <Share2 className="w-4 h-4 shrink-0" />}
+                  <span className="truncate">{copiedResult ? '已複製結果！' : '分享推薦結果'}</span>
+                </button>
+
+                {/* Button B: Re-take test or View info */}
+                {hasTakenQuiz ? (
+                  <button
+                    onClick={() => initializeQuiz(true)}
+                    className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs tracking-wider transition-all cursor-pointer active:scale-[0.99] shrink-0"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">重新測驗</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      onSelectComic(matchingComicId);
+                      onTrackClick('quiz_shared_view_details', `看爆作品: ${comicTitle}`);
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs tracking-wider transition-all cursor-pointer active:scale-[0.99] shrink-0"
+                  >
+                    <span className="truncate">看這部作品介紹</span>
+                  </button>
+                )}
+              </div>
             </div>
 
           </div>
