@@ -4,7 +4,7 @@ export function SEOSemantic({ authorName }: { authorName: string }) {
   return (
     <div className="sr-only">
       <h2>{authorName} | 作品集 (joyqul.tw)</h2>
-      <p>{authorName} 個人官方作品集。本站專為搜尋作品集的讀者提供最直接、高速的官方連載渠道連結。</p>
+      <p>{authorName} 個人官方作品集網站。本站專為搜尋作品集的讀者提供最直接、高速的官方連載渠道連結。</p>
       
       <h3>代表作列表與介紹：</h3>
       <ul>

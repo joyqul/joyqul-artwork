@@ -30,6 +30,14 @@ export default function App() {
   // Read-only frontend state mapped from data file
   const data = INITIAL_PORTFOLIO_DATA;
 
+  // Active banner duration check (July 1st to July 14th, 2026 inclusive, in Taipei Time / UTC+8)
+  const isFamiStoreActive = (): boolean => {
+    const now = new Date();
+    const start = new Date("2026-07-01T00:00:00+08:00");
+    const end = new Date("2026-07-14T23:59:59+08:00");
+    return now >= start && now <= end;
+  };
+
   // Single-page hybrid router supporting both clean path slugs and fallback hashes
   const [selectedComicId, setSelectedComicId] = useState<string | null>(() => {
     const hash = window.location.hash;
@@ -316,7 +324,7 @@ export default function App() {
               onSocialClick={onSocialClick}
             />
 
-            <FamiStoreBanner onTrackClick={trackClick} />
+            {isFamiStoreActive() && <FamiStoreBanner onTrackClick={trackClick} />}
 
             <StatusFilters 
               currentFilter={statusFilter}
