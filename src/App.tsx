@@ -29,6 +29,11 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('全部');
 
+  const isMobileDevice = (): boolean => {
+    if (typeof navigator === 'undefined') return false;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  };
+
   // Read-only frontend state mapped from data file
   const data = INITIAL_PORTFOLIO_DATA;
 
@@ -183,13 +188,32 @@ export default function App() {
   };
 
   // Quick Share url trigger
-  const triggerShare = () => {
+  const triggerShare = async () => {
     const shareUrl = getCleanShareUrl(selectedComicId);
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    showToast("網頁連結已複製到剪貼簿！");
-    trackClick('share_portal_button', '分享連結');
-    setTimeout(() => setCopied(false), 2500);
+    
+    if (navigator.share && isMobileDevice()) {
+      try {
+        await navigator.share({
+          title: `玖伊枯作品集`,
+          text: '',
+          url: shareUrl
+        });
+        trackClick('share_portal_button_api', '分享連結成功');
+        return;
+      } catch (err) {
+        console.error('Failed to share: ', err);
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      showToast("網頁連結已複製到剪貼簿！");
+      trackClick('share_portal_button', '分享連結');
+      setTimeout(() => setCopied(false), 2500);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   // Helper to generate highly descriptive alt-tags for SEO and image indexes
@@ -349,11 +373,30 @@ export default function App() {
     trackClick(`social_${platform}`, label, { url });
   };
 
-  const handleShareComic = () => {
+  const handleShareComic = async () => {
     const shareUrl = getCleanShareUrl(selectedComicId);
-    navigator.clipboard.writeText(shareUrl);
-    showToast(`已複製《${displayName || '作品'}》特別連結，可分享至社群平台！`);
-    trackClick(`share_comic_${selectedComicId}`, `分享作品: ${displayName}`);
+    
+    if (navigator.share && isMobileDevice()) {
+      try {
+        await navigator.share({
+          title: displayName ? `玖伊枯作品《${displayName}》` : `玖伊枯作品集`,
+          text: '',
+          url: shareUrl
+        });
+        trackClick(`share_comic_api_${selectedComicId}`, `分享作品成功: ${displayName}`);
+        return;
+      } catch (err) {
+        console.error('Failed to share: ', err);
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast(`已複製《${displayName || '作品'}》特別連結，可分享至社群平台！`);
+      trackClick(`share_comic_${selectedComicId}`, `分享作品: ${displayName}`);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   return (
