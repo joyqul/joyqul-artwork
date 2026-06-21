@@ -361,34 +361,6 @@ export function RecommendationQuiz({
           <div className="w-full bg-linear-to-b from-white to-[#FAF8F5] border border-[#C2A978]/30 rounded-3xl p-6 sm:p-8 shadow-[0_8px_32px_rgba(194,169,120,0.1)] flex flex-col items-center page-view-animation">
             
             {/* Downloadable Poster Card wrapper */}
-            <div 
-              id="quiz-result-poster-card"
-              className="w-full border-2 border-double rounded-2xl p-6 sm:p-8 flex flex-col items-center shadow-xs"
-              style={{
-                background: 'linear-gradient(to bottom, #FFFFFF, #FCFAF7)',
-                borderColor: 'rgba(194, 169, 120, 0.3)',
-                color: '#403C35'
-              }}
-            >
-              <div className="relative mb-5 animate-bounce">
-                <div 
-                  className="w-16 h-16 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: 'rgba(194, 169, 120, 0.12)', color: '#BCA374' }}
-                >
-                  <Star className="w-8 h-8" style={{ fill: '#C2A978', stroke: '#C2A978' }} />
-                </div>
-                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                  <span 
-                    className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                    style={{ backgroundColor: '#C2A978' }}
-                  ></span>
-                  <span 
-                    className="relative inline-flex rounded-full h-3.5 w-3.5"
-                    style={{ backgroundColor: '#C2A978' }}
-                  ></span>
-                </span>
-              </div>
-
               <span 
                 className="inline-flex items-center justify-center h-7 text-[11px] font-extrabold tracking-widest uppercase px-4 rounded-full border mb-3 select-none leading-none text-center"
                 style={{
@@ -487,25 +459,6 @@ export function RecommendationQuiz({
                   </div>
                 </div>
               </div>
-
-              {/* Elegant branding footer to print in image */}
-              <div 
-                className="mt-8 pt-5 border-t border-dashed w-full flex items-center justify-between"
-                style={{ borderColor: 'rgba(194, 169, 120, 0.20)', color: 'rgba(140, 131, 114, 0.90)' }}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs">🔮</span>
-                  <span 
-                    className="text-[10px] font-bold tracking-widest"
-                    style={{ color: '#BCA374' }}
-                  >
-                    玖伊枯作品集・命定推薦測驗
-                  </span>
-                </div>
-                <span className="text-[9px] font-mono font-medium tracking-wide">joyqul.tw</span>
-              </div>
-            </div>
-
             {/* CTAs */}
             <div className="w-full flex flex-col gap-3 mt-8">
               {/* Primary Call To Action */}
