@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, RefreshCw, Star, Sparkles, AlertCircle, Share2, Check } from 'lucide-react';
 import { QUIZ_QUESTIONS, QuizQuestion, QuizOption } from '../quizData';
 import { Artwork, ComicDetail } from '../types';
@@ -51,6 +51,31 @@ export function RecommendationQuiz({
     return null;
   };
 
+  const getSharedPctFromUrl = (): number | null => {
+    const searchParams = new URLSearchParams(window.location.search);
+    let pct = searchParams.get('pct');
+    if (pct) {
+      const parsed = parseInt(pct, 10);
+      if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) {
+        return parsed;
+      }
+    }
+
+    const hash = window.location.hash;
+    const hashSearchIdx = hash.indexOf('?');
+    if (hashSearchIdx !== -1) {
+      const hashParams = new URLSearchParams(hash.substring(hashSearchIdx));
+      pct = hashParams.get('pct');
+      if (pct) {
+        const parsed = parseInt(pct, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) {
+          return parsed;
+        }
+      }
+    }
+    return null;
+  };
+
   const [sharedResultId, setSharedResultId] = useState<string | null>(() => {
     return getSharedResultFromUrl();
   });
@@ -71,6 +96,8 @@ export function RecommendationQuiz({
     return getSharedResultFromUrl() !== null;
   });
   const [matchPercentage, setMatchPercentage] = useState<number>(() => {
+    const urlPct = getSharedPctFromUrl();
+    if (urlPct !== null) return urlPct;
     return Math.floor(Math.random() * 5) + 95; // 95% - 99%
   });
 
@@ -147,7 +174,7 @@ export function RecommendationQuiz({
       });
 
       if (window.history && window.history.pushState) {
-        window.history.pushState(null, '', `/quiz/?result=${bestComicId}`);
+        window.history.pushState(null, '', `/quiz/?result=${bestComicId}&pct=${percentage}`);
       }
 
       setHasTakenQuiz(true);
@@ -181,45 +208,13 @@ export function RecommendationQuiz({
   const matchingDetail = comicDetails[matchingComicId];
   const comicTitle = matchingDetail ? matchingDetail.title : (matchingComic?.title || "");
 
-  const [copiedResult, setCopiedResult] = useState<boolean>(false);
   const [copiedQuiz, setCopiedQuiz] = useState<boolean>(false);
-
-  const handleShareResult = async () => {
-    const origin = window.location.origin;
-    const shareUrl = `${origin}/quiz/?result=${matchingComicId}`;
-    const shareText = `🔮 玖伊枯作品集｜命定推薦測驗\n我的命定契合代表作是：《${comicTitle}》！\n✨ 工人智慧契合度高達 ${matchPercentage}%！\n\n「${RESULT_DESCRIPTIONS[matchingComicId] || ''}」\n\n快來看看你跟哪部最契合吧：\n👉 ${shareUrl}`;
-    
-    // Check if web share API is supported
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `命定推薦代表作：《${comicTitle}》`,
-          text: shareText,
-          url: shareUrl
-        });
-        onTrackClick('quiz_share_result_api', `分享結果成功: ${comicTitle}`);
-        return;
-      } catch (err) {
-        // User cancelled or share failed, fallback quietly to clipboard copy
-        console.log('Share result API cancelled or fallback copied:', err);
-      }
-    }
-
-    // Clipboard copy fallback
-    try {
-      await navigator.clipboard.writeText(shareText);
-      setCopiedResult(true);
-      onTrackClick('quiz_share_result_copy', `複製分享結果: ${comicTitle}`);
-      setTimeout(() => setCopiedResult(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
-    }
-  };
+  const [copiedResult, setCopiedResult] = useState<boolean>(false);
 
   const handleShareQuiz = async () => {
     const origin = window.location.origin;
     const shareUrl = `${origin}/quiz/`;
-    const shareText = `🔮 玖伊枯作品集｜命定推薦測驗\n回答幾個簡單的趣味選擇對決，瞬間算出你的命定耽美/常溫原創漫畫代表作！\n👉 ${shareUrl}`;
+    const shareText = '';
     
     // Check if web share API is supported
     if (navigator.share) {
@@ -238,10 +233,39 @@ export function RecommendationQuiz({
 
     // Clipboard copy fallback
     try {
-      await navigator.clipboard.writeText(shareText);
+      await navigator.clipboard.writeText(shareUrl);
       setCopiedQuiz(true);
       onTrackClick('quiz_share_quiz_copy', `複製分享測驗連結`);
       setTimeout(() => setCopiedQuiz(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const handleShareResultUrl = async () => {
+    const origin = window.location.origin;
+    const shareUrl = `${origin}/quiz/?result=${matchingComicId}&pct=${matchPercentage}`;
+    const shareText = '';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `玖伊枯作品集命定推薦`,
+          text: shareText,
+          url: shareUrl
+        });
+        onTrackClick('quiz_share_result_api', `分享測驗結果成功: ${matchingComicId}`);
+        return;
+      } catch (err) {
+        console.log('Share result API cancelled or fallback copied:', err);
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedResult(true);
+      onTrackClick('quiz_share_result_copy', `複製分享結果連結: ${matchingComicId}`);
+      setTimeout(() => setCopiedResult(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -330,80 +354,149 @@ export function RecommendationQuiz({
         matchingComic && (
           <div className="w-full bg-linear-to-b from-white to-[#FAF8F5] border border-[#C2A978]/30 rounded-3xl p-6 sm:p-8 shadow-[0_8px_32px_rgba(194,169,120,0.1)] flex flex-col items-center page-view-animation">
             
-            <div className="relative mb-5 animate-bounce">
-              <div className="w-16 h-16 rounded-full bg-[#C2A978]/12 flex items-center justify-center text-[#BCA374]">
-                <Star className="w-8 h-8 fill-[#C2A978] text-[#C2A978]" />
+            {/* Downloadable Poster Card wrapper */}
+            <div 
+              id="quiz-result-poster-card"
+              className="w-full border-2 border-double rounded-2xl p-6 sm:p-8 flex flex-col items-center shadow-xs"
+              style={{
+                background: 'linear-gradient(to bottom, #FFFFFF, #FCFAF7)',
+                borderColor: 'rgba(194, 169, 120, 0.3)',
+                color: '#403C35'
+              }}
+            >
+              <div className="relative mb-5 animate-bounce">
+                <div 
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: 'rgba(194, 169, 120, 0.12)', color: '#BCA374' }}
+                >
+                  <Star className="w-8 h-8" style={{ fill: '#C2A978', stroke: '#C2A978' }} />
+                </div>
+                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                  <span 
+                    className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                    style={{ backgroundColor: '#C2A978' }}
+                  ></span>
+                  <span 
+                    className="relative inline-flex rounded-full h-3.5 w-3.5"
+                    style={{ backgroundColor: '#C2A978' }}
+                  ></span>
+                </span>
               </div>
-              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C2A978] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#C2A978]"></span>
-              </span>
-            </div>
 
-            <span className="text-[11px] font-extrabold tracking-widest text-[#C2A978] uppercase bg-[#C2A978]/10 px-3.5 py-1.5 rounded-full border border-[#C2A978]/15 mb-3 select-none">
-              {hasTakenQuiz ? 'YOUR DESTINY MATCH' : 'FRIEND\'S RECOMMENDATION'}
-            </span>
-
-            <h2 className="text-2xl sm:text-3xl font-serif font-extrabold tracking-wide text-[#33302B] mb-2 text-center">
-              {hasTakenQuiz ? `${matchPercentage}% 命定契合度！` : '朋友最愛的契合代表作！'}
-            </h2>
-            
-            <p className="text-xs text-[#8C8372] mb-6 tracking-wide text-center">
-              {hasTakenQuiz 
-                ? '經過工人智慧的演算，推薦給你的作品是：' 
-                : `他的測驗結果與《${comicTitle}》高度契合達 ${matchPercentage}%！`}
-            </p>
-
-            {/* Interactive Matching Card */}
-            <div className="w-full flex flex-col items-center">
-              <button
-                onClick={() => {
-                  onSelectComic(matchingComicId);
-                  onTrackClick('quiz_result_card_click', `命中結果卡片: ${comicTitle}`);
+              <span 
+                className="inline-flex items-center justify-center h-7 text-[11px] font-extrabold tracking-widest uppercase px-4 rounded-full border mb-3 select-none leading-none text-center"
+                style={{
+                  color: '#C2A978',
+                  backgroundColor: 'rgba(194, 169, 120, 0.08)',
+                  borderColor: 'rgba(194, 169, 120, 0.15)'
                 }}
-                className="block text-left relative w-full aspect-[2/1] rounded-2xl overflow-hidden shadow-lg border border-[#C2A978]/25 group cursor-pointer transition-transform hover:scale-[1.01] duration-300"
               >
-                <img
-                  src={matchingComic.imageUrl}
-                  alt={getArtworkAltText(matchingComicId, comicTitle)}
-                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
-                  referrerPolicy="no-referrer"
-                />
-                
-                {matchingComic.status && (
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-[#2B2824]/90 backdrop-blur-xs text-white text-[9px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full shadow-xs select-none">
-                      {matchingComic.status}
-                    </span>
-                  </div>
-                )}
-              </button>
+                {hasTakenQuiz ? 'YOUR DESTINY MATCH' : 'FRIEND\'S RECOMMENDATION'}
+              </span>
 
-              <div className="mt-4 text-center px-2 w-full max-w-md">
-                <h3 className="text-lg sm:text-xl font-serif font-bold tracking-wide text-[#33302B]">
-                  《{comicTitle}》
-                </h3>
+              <h2 
+                className="text-2xl sm:text-3xl font-serif font-extrabold tracking-wide mb-2 text-center"
+                style={{ color: '#33302B' }}
+              >
+                {hasTakenQuiz ? `${matchPercentage}% 命定契合度！` : '朋友最愛的契合代表作！'}
+              </h2>
+              
+              <p 
+                className="text-xs mb-6 tracking-wide text-center"
+                style={{ color: '#8C8372' }}
+              >
+                {hasTakenQuiz 
+                  ? '經過工人智慧的演算，推薦給你的作品是：' 
+                  : `他的測驗結果與《${comicTitle}》高度契合達 ${matchPercentage}%！`}
+              </p>
 
-                <div className="mt-3.5 bg-stone-50 p-5 rounded-2xl border border-stone-200/50 text-left">
-                  {/* Original description */}
-                  {(matchingDetail?.description || matchingComic?.description) && (
-                    <p className="text-xs sm:text-sm text-[#8C8372] leading-relaxed tracking-wide mb-3 pb-3 border-b border-dashed border-stone-200">
-                      {matchingDetail?.description || matchingComic?.description}
-                    </p>
-                  )}
+              {/* Interactive Matching Card */}
+              <div className="w-full flex flex-col items-center">
+                <button
+                  onClick={() => {
+                    onSelectComic(matchingComicId);
+                    onTrackClick('quiz_result_card_click', `命中結果卡片: ${comicTitle}`);
+                  }}
+                  className="block text-left relative w-full aspect-[2/1] rounded-2xl overflow-hidden shadow-lg border group cursor-pointer transition-transform hover:scale-[1.01] duration-300"
+                  style={{ borderColor: 'rgba(194, 169, 120, 0.25)' }}
+                >
+                  <img
+                    src={matchingComic.imageUrl}
+                    alt={getArtworkAltText(matchingComicId, comicTitle)}
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
+                    referrerPolicy="no-referrer"
+                  />
                   
-                  {/* Custom recommendation */}
-                  {RESULT_DESCRIPTIONS[matchingComicId] && (
-                    <div>
-                      <div className="text-[10px] font-extrabold text-[#C2A978] tracking-widest mb-1.5 flex items-center gap-1">
-                        <span>✨ 工人智慧推薦：</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-[#403C35] font-medium leading-relaxed tracking-wide">
-                        {RESULT_DESCRIPTIONS[matchingComicId]}
-                      </p>
+                  {matchingComic.status && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <span 
+                        className="inline-flex items-center justify-center backdrop-blur-xs h-5 text-[9px] uppercase font-bold tracking-wider px-2.5 rounded-full shadow-xs select-none leading-none"
+                        style={{ backgroundColor: 'rgba(43, 40, 36, 0.90)', color: '#FFFFFF' }}
+                      >
+                        {matchingComic.status}
+                      </span>
                     </div>
                   )}
+                </button>
+
+                <div className="mt-4 text-center px-2 w-full max-w-md">
+                  <h3 
+                    className="text-lg sm:text-xl font-serif font-bold tracking-wide"
+                    style={{ color: '#33302B' }}
+                  >
+                    《{comicTitle}》
+                  </h3>
+
+                  <div 
+                    className="mt-3.5 p-5 rounded-2xl border text-left"
+                    style={{ backgroundColor: '#FAF9F6', borderColor: 'rgba(229, 229, 224, 0.50)' }}
+                  >
+                    {/* Original description */}
+                    {(matchingDetail?.description || matchingComic?.description) && (
+                      <p 
+                        className="text-xs sm:text-sm leading-relaxed tracking-wide mb-3 pb-3 border-b border-dashed"
+                        style={{ color: '#8C8372', borderColor: '#E5E5E0' }}
+                      >
+                        {matchingDetail?.description || matchingComic?.description}
+                      </p>
+                    )}
+                    
+                    {/* Custom recommendation */}
+                    {RESULT_DESCRIPTIONS[matchingComicId] && (
+                      <div>
+                        <div 
+                          className="text-[10px] font-extrabold tracking-widest mb-1.5 flex items-center gap-1"
+                          style={{ color: '#C2A978' }}
+                        >
+                          <span>✨ 工人智慧推薦：</span>
+                        </div>
+                        <p 
+                          className="text-xs sm:text-sm font-medium leading-relaxed tracking-wide"
+                          style={{ color: '#403C35' }}
+                        >
+                          {RESULT_DESCRIPTIONS[matchingComicId]}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              </div>
+
+              {/* Elegant branding footer to print in image */}
+              <div 
+                className="mt-8 pt-5 border-t border-dashed w-full flex items-center justify-between"
+                style={{ borderColor: 'rgba(194, 169, 120, 0.20)', color: 'rgba(140, 131, 114, 0.90)' }}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs">🔮</span>
+                  <span 
+                    className="text-[10px] font-bold tracking-widest"
+                    style={{ color: '#BCA374' }}
+                  >
+                    玖伊枯作品集・命定推薦測驗
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono font-medium tracking-wide">joyqul.tw</span>
               </div>
             </div>
 
@@ -419,7 +512,7 @@ export function RecommendationQuiz({
                   className="w-full flex items-center justify-center gap-1.5 py-3.5 px-4 rounded-full bg-gradient-to-r from-[#C2A978] to-[#DFCBB4] hover:from-[#BCA374] hover:to-[#DFC29E] text-white font-extrabold text-xs sm:text-sm tracking-wider shadow-xs hover:shadow-md transition-all cursor-pointer active:scale-[0.99]"
                 >
                   <span>直接看爆這部作品</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" className="shrink-0">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
@@ -434,42 +527,46 @@ export function RecommendationQuiz({
                 </button>
               )}
 
-              {/* Grid of Secondary Sharing/Action buttons */}
-              <div className="grid grid-cols-2 gap-2.5 w-full">
-                {/* Button A: Share / Copy Result */}
-                <button
-                  onClick={handleShareResult}
-                  className={`flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border transition-all cursor-pointer active:scale-[0.99] font-bold text-xs sm:text-sm tracking-wide shrink-0 ${
-                    copiedResult
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
-                      : 'border-[#C2A978]/60 hover:border-[#C2A978] bg-[#C2A978]/4 text-[#BCA374] hover:text-[#A68F62]'
-                  }`}
-                >
-                  {copiedResult ? <Check className="w-4 h-4 shrink-0" /> : <Share2 className="w-4 h-4 shrink-0" />}
-                  <span className="truncate">{copiedResult ? '已複製結果！' : '分享推薦結果'}</span>
-                </button>
-
-                {/* Button B: Re-take test or View info */}
-                {hasTakenQuiz ? (
+              {/* Secondary Buttons Row */}
+              {hasTakenQuiz ? (
+                <div className="grid grid-cols-2 gap-2.5 w-full">
+                  {/* Share Result Button */}
                   <button
-                    onClick={() => initializeQuiz(true)}
-                    className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs tracking-wider transition-all cursor-pointer active:scale-[0.99] shrink-0"
+                    onClick={handleShareResultUrl}
+                    className={`flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border transition-all cursor-pointer active:scale-[0.99] font-bold text-xs sm:text-sm tracking-wide ${
+                      copiedResult
+                        ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
+                        : 'border-[#C2A978]/60 hover:border-[#C2A978] bg-[#C2A978]/4 text-[#BCA374] hover:text-[#A68F62]'
+                    }`}
+                  >
+                    {copiedResult ? <Check className="w-4 h-4 shrink-0" /> : <Share2 className="w-4 h-4 shrink-0" />}
+                    <span className="truncate">
+                      {copiedResult ? '已複製結果！' : '分享測驗結果'}
+                    </span>
+                  </button>
+
+                  {/* Re-take test button */}
+                  <button
+                    onClick={() => {
+                      initializeQuiz(true);
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs sm:text-sm tracking-wider transition-all cursor-pointer active:scale-[0.99]"
                   >
                     <RefreshCw className="w-3.5 h-3.5 shrink-0" />
                     <span className="truncate">重新測驗</span>
                   </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      onSelectComic(matchingComicId);
-                      onTrackClick('quiz_shared_view_details', `看爆作品: ${comicTitle}`);
-                    }}
-                    className="flex items-center justify-center gap-1.5 py-3.5 px-3 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs tracking-wider transition-all cursor-pointer active:scale-[0.99] shrink-0"
-                  >
-                    <span className="truncate">看這部作品介紹</span>
-                  </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    onSelectComic(matchingComicId);
+                    onTrackClick('quiz_shared_view_details', `看爆作品: ${comicTitle}`);
+                  }}
+                  className="w-full flex items-center justify-center gap-1.5 py-3.5 px-4 rounded-full border border-stone-300 hover:border-[#C2A978] bg-white text-[#8C8372] hover:text-[#403C35] font-semibold text-xs sm:text-sm tracking-wider transition-all cursor-pointer active:scale-[0.99]"
+                >
+                  <span className="truncate">看這部作品介紹</span>
+                </button>
+              )}
             </div>
 
           </div>
