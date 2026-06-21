@@ -154,7 +154,8 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
         text: '忠犬攻',
         scores: {
           'calculus_manga': 12,
-          'false_love_signal_manga': 4
+          'false_love_signal_manga': 4,
+          'how_to_date_a_dragon_manga': 2
         }
       },
       {
@@ -167,6 +168,12 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
         text: '腹黑攻',
         scores: {
           'false_love_signal_manga': 12
+        }
+      },
+      {
+        text: '天然撩攻',
+        scores: {
+          'how_to_date_a_dragon_manga': 12
         }
       }
     ]

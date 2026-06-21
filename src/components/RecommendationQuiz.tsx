@@ -14,10 +14,10 @@ interface RecommendationQuizProps {
 
 // Fun descriptions tailored to each comic result
 const RESULT_DESCRIPTIONS: Record<string, string> = {
-  'false_love_signal_manga': '「心動感不就是虛假的戀愛訊號罷了。」推薦給喜歡微虐辦公室戀愛、想看看似奶狗其實腹黑的學弟攻與理工直男學長CP的你。',
-  'calculus_manga': '意外發現鄰居是自己有看的GV男優同時還是已經畢業的學長？！推薦給喜歡輕鬆爆笑、想看可愛忠犬學弟攻與誘受學長CP的你。微積分也可以很萌！',
-  'how_to_date_a_dragon_manga': '竟然跟傳說中的大黑龍成了戀愛對象？！推薦給渴望甜度溢出、喜歡奇幻幽默與天然撩直球學弟攻、容易害羞學長受的你！不用想了，今天就上車追更新！',
-  'joyqul_daily_manga': '最療癒的日常生活隨筆！推薦給今天想被戳中笑穴、看著各種爆笑與無厘頭非日常四格大笑的你。沒有任何閱讀壓力，純粹的快樂補給站！'
+  'false_love_signal_manga': '推薦給喜歡微虐辦公室戀愛、想看看似奶狗其實腹黑的學弟攻與理工直男學長CP的你。',
+  'calculus_manga': '推薦給喜歡輕鬆爆笑、想看可愛忠犬學弟攻與誘受學長CP的你。微積分也可以很萌！',
+  'how_to_date_a_dragon_manga': '推薦給渴望甜度溢出、喜歡奇幻幽默與天然撩直球學弟攻、容易害羞學長受的你。',
+  'joyqul_daily_manga': '最療癒的日常生活隨筆！推薦給今天想被戳中笑穴、看著各種爆笑與無厘頭非日常四格大笑的你。'
 };
 
 export function RecommendationQuiz({
@@ -231,14 +231,31 @@ export function RecommendationQuiz({
                 )}
               </button>
 
-              <div className="mt-4 text-center px-2">
+              <div className="mt-4 text-center px-2 w-full max-w-md">
                 <h3 className="text-lg sm:text-xl font-serif font-bold tracking-wide text-[#33302B]">
                   《{comicTitle}》
                 </h3>
 
-                <p className="text-xs sm:text-sm text-[#615B51] mt-3 leading-relaxed tracking-wide text-center max-w-md bg-stone-50 p-4 rounded-xl border border-stone-200/50">
-                  {RESULT_DESCRIPTIONS[matchingComicId] || matchingDetail?.description}
-                </p>
+                <div className="mt-3.5 bg-stone-50 p-5 rounded-2xl border border-stone-200/50 text-left">
+                  {/* Original description */}
+                  {(matchingDetail?.description || matchingComic?.description) && (
+                    <p className="text-xs sm:text-sm text-[#8C8372] leading-relaxed tracking-wide mb-3 pb-3 border-b border-dashed border-stone-200">
+                      {matchingDetail?.description || matchingComic?.description}
+                    </p>
+                  )}
+                  
+                  {/* Custom recommendation */}
+                  {RESULT_DESCRIPTIONS[matchingComicId] && (
+                    <div>
+                      <div className="text-[10px] font-extrabold text-[#C2A978] tracking-widest mb-1.5 flex items-center gap-1">
+                        <span>✨ 工人智慧推薦：</span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-[#403C35] font-medium leading-relaxed tracking-wide">
+                        {RESULT_DESCRIPTIONS[matchingComicId]}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
