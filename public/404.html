@@ -221,9 +221,9 @@
         
         // Match clean comic slugs (e.g., /comic/false_love_signal_manga or without trailing slash)
         const pathMatch = path.match(/\/comic\/([^/]+)/);
+        const isQuiz = path.includes('/quiz');
         
-        if (pathMatch) {
-          const comicId = pathMatch[1];
+        if (pathMatch || isQuiz) {
           const recoverySection = document.getElementById("recovery-notice");
           const ctaBtn = document.getElementById("cta-btn");
           
@@ -232,9 +232,16 @@
             ctaBtn.style.display = "none";
           }
           
+          let spaTarget = window.location.protocol + '//' + window.location.host;
+          if (isQuiz) {
+            spaTarget += '/#/quiz';
+          } else {
+            const comicId = pathMatch[1];
+            spaTarget += '/#/comic/' + comicId;
+          }
+          
           // Redirect to the React index page with correct target hash router pathing after a brief moment
           setTimeout(function() {
-            const spaTarget = window.location.protocol + '//' + window.location.host + '/#/comic/' + comicId;
             window.location.replace(spaTarget);
           }, 800);
         }

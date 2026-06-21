@@ -14,6 +14,8 @@ import { FamiStoreBanner } from './components/FamiStoreBanner';
 import { StatusFilters } from './components/StatusFilters';
 import { ComicList } from './components/ComicList';
 import { ComicDetailsView } from './components/ComicDetailsView';
+import { RecommendationQuiz } from './components/RecommendationQuiz';
+import { RecommendationBanner } from './components/RecommendationBanner';
 
 declare global {
   interface Window {
@@ -39,6 +41,12 @@ export default function App() {
   };
 
   // Single-page hybrid router supporting both clean path slugs and fallback hashes
+  const [isQuizActive, setIsQuizActive] = useState<boolean>(() => {
+    const hash = window.location.hash;
+    const path = window.location.pathname;
+    return hash === '#/quiz' || hash.startsWith('#/quiz/') || path.includes('/quiz');
+  });
+
   const [selectedComicId, setSelectedComicId] = useState<string | null>(() => {
     const hash = window.location.hash;
     const path = window.location.pathname;
@@ -58,20 +66,35 @@ export default function App() {
     if (hash.startsWith('#/comic/')) {
       const id = hash.replace('#/comic/', '');
       window.history.replaceState(null, '', `/comic/${id}/`);
+      setSelectedComicId(id);
+      setIsQuizActive(false);
+    } else if (hash === '#/quiz' || hash.startsWith('#/quiz/')) {
+      window.history.replaceState(null, '', `/quiz/`);
+      setIsQuizActive(true);
+      setSelectedComicId(null);
+    } else if (isQuizActive) {
+      window.history.replaceState(null, '', '/quiz/');
     } else if (selectedComicId) {
       // Keep URL perfectly aligned with static directory slug paths
       window.history.replaceState(null, '', `/comic/${selectedComicId}/`);
     } else {
       window.history.replaceState(null, '', '/');
     }
-  }, [selectedComicId]);
+  }, [selectedComicId, isQuizActive]);
 
   useEffect(() => {
     const handlePopState = () => {
       const hash = window.location.hash;
       const path = window.location.pathname;
-      let matchedId: string | null = null;
       
+      if (path.includes('/quiz') || hash === '#/quiz' || hash.startsWith('#/quiz/')) {
+        setIsQuizActive(true);
+        setSelectedComicId(null);
+        return;
+      }
+      
+      setIsQuizActive(false);
+      let matchedId: string | null = null;
       const pathMatch = path.match(/\/comic\/([^/]+)/);
       if (pathMatch) {
         matchedId = pathMatch[1];
@@ -89,7 +112,21 @@ export default function App() {
     };
   }, []);
 
+  const navigateToQuiz = (active: boolean) => {
+    if (active) {
+      window.history.pushState(null, '', `/quiz/`);
+      setIsQuizActive(true);
+      setSelectedComicId(null);
+    } else {
+      window.history.pushState(null, '', '/');
+      setIsQuizActive(false);
+      setSelectedComicId(null);
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' as any });
+  };
+
   const navigateToComic = (id: string | null) => {
+    setIsQuizActive(false);
     if (id) {
       window.history.pushState(null, '', `/comic/${id}/`);
     } else {
@@ -220,14 +257,22 @@ export default function App() {
   useEffect(() => {
     const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
     
-    const pagePath = selectedComicId ? `/comic/${selectedComicId}/` : '/';
-    const pageTitle = selectedComicId && displayName 
-      ? `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集` 
-      : "玖伊枯 | 作品集";
-    
-    const pageDesc = selectedComicId && displayName
-      ? `《${displayName}》線上連載以及其他連結。${detail?.description || mainComic?.description || ''}`
-      : "台灣BL漫畫家玖伊枯的個人官方網站與作品集門戶。收錄熱門連載代表作：《虛假的戀愛訊號》、《過氣男優的我竟然成為了微積分補教名師》、《要怎麼跟龍談戀愛》閱讀渠道與最新延伸作畫日常。";
+    let pagePath = '/';
+    let pageTitle = "玖伊枯 | 作品集";
+    let pageDesc = "台灣BL漫畫家玖伊枯的個人官方網站與作品集門戶。收錄熱門連載代表作：《虛假的戀愛訊號》、《過氣男優的我竟然成為了微積分補教名師》、《要怎麼跟龍談戀愛》閱讀渠道與最新延伸作畫日常。";
+    let documentTitle = "玖伊枯 | 作品集 (joyqul.tw)";
+
+    if (isQuizActive) {
+      pagePath = '/quiz/';
+      pageTitle = "命定推薦測驗 | 玖伊枯 作品集";
+      pageDesc = "回答幾個簡單的趣味選擇題，玖伊枯帶你瞬間找出符合你喜好、最好看最對味的原創耽美/日常推薦作品！";
+      documentTitle = "命定推薦測驗 | 玖伊枯 作品集 (joyqul.tw)";
+    } else if (selectedComicId && displayName) {
+      pagePath = `/comic/${selectedComicId}/`;
+      pageTitle = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集`;
+      pageDesc = `《${displayName}》線上連載以及其他連結。${detail?.description || mainComic?.description || ''}`;
+      documentTitle = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集 (joyqul.tw)`;
+    }
 
     // Obtain image URL from the current comic data fallback to default avatar
     const rawImage = mainComic?.imageUrl || '/assets/joyqul_avatar.webp';
@@ -245,16 +290,14 @@ export default function App() {
       ? rawImage 
       : `https://joyqul.tw/${cleanAssetPath}`;
 
-    const pageUrl = selectedComicId 
-      ? `https://joyqul.tw/comic/${selectedComicId}/`
-      : 'https://joyqul.tw/';
+    const pageUrl = isQuizActive
+      ? 'https://joyqul.tw/quiz/'
+      : selectedComicId 
+        ? `https://joyqul.tw/comic/${selectedComicId}/`
+        : 'https://joyqul.tw/';
 
     // Update document title first
-    if (selectedComicId && displayName) {
-      document.title = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集 (joyqul.tw)`;
-    } else {
-      document.title = "玖伊枯 | 作品集 (joyqul.tw)";
-    }
+    document.title = documentTitle;
 
     // Helper function to dynamically update or create meta elements in head (highly effective for JS-capable parsers)
     const updateMeta = (nameOrProperty: string, content: string, isName = false) => {
@@ -288,7 +331,7 @@ export default function App() {
         cookie_flags: 'SameSite=None;Secure'
       });
     }
-  }, [selectedComicId, displayName, detail, mainComic]);
+  }, [selectedComicId, displayName, detail, mainComic, isQuizActive]);
 
   const onSocialClick = (platform: string, label: string, url: string) => {
     trackClick(`social_${platform}`, label, { url });
@@ -313,7 +356,17 @@ export default function App() {
       {/* Main minimalist Portaly canvas container */}
       <div className="max-w-xl mx-auto px-5 pt-8">
         
-        {selectedComicId === null ? (
+        {isQuizActive ? (
+          /* RECOMMENDATION QUIZ VIEW */
+          <RecommendationQuiz 
+            artworks={data.artworks}
+            comicDetails={COMIC_DETAILS}
+            onBack={() => navigateToQuiz(false)}
+            onSelectComic={navigateToComic}
+            onTrackClick={trackClick}
+            getArtworkAltText={getArtworkAltText}
+          />
+        ) : selectedComicId === null ? (
           /* INDEX STATE (Main Profile + Comic List) */
           <div className="text-center flex flex-col items-center">
             
@@ -325,6 +378,11 @@ export default function App() {
             />
 
             {isFamiStoreActive() && <FamiStoreBanner onTrackClick={trackClick} />}
+
+            <RecommendationBanner 
+              onStartQuiz={() => navigateToQuiz(true)}
+              onTrackClick={trackClick}
+            />
 
             <StatusFilters 
               currentFilter={statusFilter}
