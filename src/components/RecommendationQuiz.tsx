@@ -211,13 +211,18 @@ export function RecommendationQuiz({
   const [copiedQuiz, setCopiedQuiz] = useState<boolean>(false);
   const [copiedResult, setCopiedResult] = useState<boolean>(false);
 
+  const isMobileDevice = (): boolean => {
+    if (typeof navigator === 'undefined') return false;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  };
+
   const handleShareQuiz = async () => {
     const origin = window.location.origin;
     const shareUrl = `${origin}/quiz/`;
     const shareText = '';
     
-    // Check if web share API is supported
-    if (navigator.share) {
+    // Check if web share API is supported and we are on mobile
+    if (navigator.share && isMobileDevice()) {
       try {
         await navigator.share({
           title: `玖伊枯命定推薦測驗`,
@@ -247,7 +252,8 @@ export function RecommendationQuiz({
     const shareUrl = `${origin}/quiz/?result=${matchingComicId}&pct=${matchPercentage}`;
     const shareText = '';
 
-    if (navigator.share) {
+    // Check if web share API is supported and we are on mobile
+    if (navigator.share && isMobileDevice()) {
       try {
         await navigator.share({
           title: `玖伊枯作品集命定推薦`,
