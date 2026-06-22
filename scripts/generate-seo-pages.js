@@ -106,6 +106,123 @@ comics.forEach(comic => {
   fs.writeFileSync(path.join(outputDir, 'index.html'), seoHtml);
 });
 
+// Create general quiz landing page under dist/quiz/index.html
+const generalQuizTitle = "命定推薦測驗 | 玖伊枯 作品集";
+const generalQuizDesc = "回答幾個簡單的趣味選擇題，玖伊枯帶你瞬間找出符合你喜好、最好看最對味的原創耽美/日常推薦作品！";
+const generalQuizImage = resolveHashedAsset('joyqul_avatar');
+const generalQuizImageUrl = `https://joyqul.tw${generalQuizImage}`;
+const generalQuizUrl = "https://joyqul.tw/quiz/";
+
+const generalQuizHtml = `<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/webp" href="${generalQuizImage}" />
+    
+    <!-- Primary Search Engine Optimization (SEO) Metadata -->
+    <title>${generalQuizTitle}</title>
+    <meta name="description" content="${generalQuizDesc}" />
+    <meta name="keywords" content="Joyqul, 玖伊枯, 命定推薦測驗, 虛假的戀愛訊號, 過氣男優的我竟然成為了微積分補教名師, 要怎麼跟龍談戀愛, 台灣BL漫畫家, BL漫畫, 耽美漫畫" />
+    <link rel="canonical" href="${generalQuizUrl}" />
+
+    <!-- Open Graph / Web Crawler sharing cards -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="${generalQuizTitle}" />
+    <meta property="og:description" content="${generalQuizDesc}" />
+    <meta property="og:url" content="${generalQuizUrl}" />
+    <meta property="og:image" content="${generalQuizImageUrl}" />
+
+    <!-- Twitter / X sharing cards -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="${generalQuizTitle}" />
+    <meta name="twitter:description" content="${generalQuizDesc}" />
+    <meta name="twitter:image" content="${generalQuizImageUrl}" />
+
+    <!-- Instant client redirection logic to the SPA hashtag path -->
+    <meta http-equiv="refresh" content="0; url=/#/quiz" />
+    <script>
+      // Seamlessly transfer page context back to React client router
+      const urlParams = window.location.search;
+      const spaTarget = window.location.protocol + '//' + window.location.host + '/#/quiz' + (urlParams ? urlParams : '');
+      window.location.replace(spaTarget);
+    </script>
+  </head>
+  <body style="font-family: system-ui, -apple-system, sans-serif; background: #FAF8F5; color: #403C35; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center;">
+    <div>
+      <h3 style="font-weight: 500;">正在為您導向至《命定推薦測驗》...</h3>
+      <p style="font-size: 14px; color: #8F8778;">若您的瀏覽器沒有自動跳轉，請 <a href="/#/quiz" style="color: #BCA374; font-weight: bold; text-decoration: underline;">點擊此處</a> 直接開啟。</p>
+    </div>
+  </body>
+</html>
+`;
+
+const quizDir = path.join(distDir, 'quiz');
+fs.mkdirSync(quizDir, { recursive: true });
+fs.writeFileSync(path.join(quizDir, 'index.html'), generalQuizHtml);
+
+// Create individual quiz result redirect landing pages
+comics.forEach(comic => {
+  const pageImageRelative = resolveHashedAsset(comic.imagePrefix);
+  const pageImageUrl = `https://joyqul.tw${pageImageRelative}`;
+  
+  // Extract clean title of the work for matching format
+  const rawTitleMatch = comic.title.match(/《([^》]+)》/);
+  const comicSubTitle = rawTitleMatch ? rawTitleMatch[1] : comic.title.split('|')[0].trim();
+  
+  const resultTitle = `命定推薦代表作：《${comicSubTitle}》 | 玖伊枯 作品集`;
+  const resultDesc = `我在玖伊枯作品集命定推薦測驗得到的結果是《${comicSubTitle}》！快來回答趣味選擇題，找出最適合你的極品耽美原創作品推薦！`;
+  const resultUrl = `https://joyqul.tw/quiz/${comic.id}/`;
+
+  const seoResultHtml = `<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/webp" href="${resolveHashedAsset('joyqul_avatar')}" />
+    
+    <!-- Primary Search Engine Optimization (SEO) Metadata -->
+    <title>${resultTitle}</title>
+    <meta name="description" content="${resultDesc}" />
+    <meta name="keywords" content="Joyqul, 玖伊枯, 命定推薦測驗, ${comicSubTitle}, 台灣BL漫畫家, BL漫畫, 耽美漫畫" />
+    <link rel="canonical" href="${resultUrl}" />
+
+    <!-- Open Graph / Web Crawler sharing cards -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="${resultTitle}" />
+    <meta property="og:description" content="${resultDesc}" />
+    <meta property="og:url" content="${resultUrl}" />
+    <meta property="og:image" content="${pageImageUrl}" />
+
+    <!-- Twitter / X sharing cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${resultTitle}" />
+    <meta name="twitter:description" content="${resultDesc}" />
+    <meta name="twitter:image" content="${pageImageUrl}" />
+
+    <!-- Instant client redirection logic to the SPA hashtag path -->
+    <meta http-equiv="refresh" content="0; url=/#/quiz?result=${comic.id}" />
+    <script>
+      // Seamlessly transfer page context back to React client router
+      const urlParams = window.location.search;
+      const spaTarget = window.location.protocol + '//' + window.location.host + '/#/quiz?result=${comic.id}' + (urlParams ? '&' + urlParams.substring(1) : '');
+      window.location.replace(spaTarget);
+    </script>
+  </head>
+  <body style="font-family: system-ui, -apple-system, sans-serif; background: #FAF8F5; color: #403C35; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center;">
+    <div>
+      <h3 style="font-weight: 500;">正在為您導向至《玖伊枯作品集》測驗結果...</h3>
+      <p style="font-size: 14px; color: #8F8778;">若您的瀏覽器沒有自動跳轉，請 <a href="/#/quiz?result=${comic.id}" style="color: #BCA374; font-weight: bold; text-decoration: underline;">點擊此處</a> 直接開啟。</p>
+    </div>
+  </body>
+</html>
+`;
+
+  const outputResultDir = path.join(quizDir, comic.id);
+  fs.mkdirSync(outputResultDir, { recursive: true });
+  fs.writeFileSync(path.join(outputResultDir, 'index.html'), seoResultHtml);
+});
+
 // Copy original non-hashed joyqul_avatar.webp to dist/assets/ as a robust static fallback
 const sourceAvatar = path.join(process.cwd(), 'assets', 'joyqul_avatar.webp');
 const targetAvatar = path.join(distDir, 'assets', 'joyqul_avatar.webp');

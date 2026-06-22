@@ -69,6 +69,16 @@ export default function App() {
   const [quizResultId, setQuizResultId] = useState<string | null>(() => {
     const hash = window.location.hash;
     const path = window.location.pathname;
+    
+    // 1. Check path for /quiz/comic_id first
+    const pathMatchQuiz = path.match(/\/quiz\/([^/]+)/);
+    if (pathMatchQuiz) {
+      const res = pathMatchQuiz[1];
+      if (res && (COMIC_DETAILS[res] || INITIAL_PORTFOLIO_DATA.artworks.some(art => art.id === res))) {
+        return res;
+      }
+    }
+
     if (hash.startsWith('#/quiz') || path.includes('/quiz')) {
       const searchParams = new URLSearchParams(window.location.search);
       let res = searchParams.get('result');
@@ -128,12 +138,22 @@ export default function App() {
         setIsQuizActive(true);
         setSelectedComicId(null);
         
-        const searchParams = new URLSearchParams(window.location.search);
-        let res = searchParams.get('result');
+        let res = null;
+        const pathMatchQuiz = path.match(/\/quiz\/([^/]+)/);
+        if (pathMatchQuiz) {
+          res = pathMatchQuiz[1];
+        }
+        
+        if (!res) {
+          const searchParams = new URLSearchParams(window.location.search);
+          res = searchParams.get('result');
+        }
+        
         if (!res && hash.indexOf('?') !== -1) {
           const hashParams = new URLSearchParams(hash.substring(hash.indexOf('?')));
           res = hashParams.get('result');
         }
+        
         setQuizResultId(res);
         return;
       }

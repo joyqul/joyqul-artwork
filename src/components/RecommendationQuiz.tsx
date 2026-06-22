@@ -251,7 +251,7 @@ export function RecommendationQuiz({
 
   const handleShareResultUrl = async () => {
     const origin = window.location.origin;
-    const shareUrl = `${origin}/quiz/?result=${matchingComicId}&pct=${matchPercentage}`;
+    const shareUrl = `${origin}/quiz/${matchingComicId}/?pct=${matchPercentage}`;
     const shareText = '';
 
     // Check if web share API is supported and we are on mobile
