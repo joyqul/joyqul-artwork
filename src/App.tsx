@@ -66,6 +66,27 @@ export default function App() {
     return null;
   });
 
+  const [quizResultId, setQuizResultId] = useState<string | null>(() => {
+    const hash = window.location.hash;
+    const path = window.location.pathname;
+    if (hash.startsWith('#/quiz') || path.includes('/quiz')) {
+      const searchParams = new URLSearchParams(window.location.search);
+      let res = searchParams.get('result');
+      if (res && (COMIC_DETAILS[res] || INITIAL_PORTFOLIO_DATA.artworks.some(art => art.id === res))) {
+        return res;
+      }
+      const hashSearchIdx = hash.indexOf('?');
+      if (hashSearchIdx !== -1) {
+        const hashParams = new URLSearchParams(hash.substring(hashSearchIdx));
+        res = hashParams.get('result');
+        if (res && (COMIC_DETAILS[res] || INITIAL_PORTFOLIO_DATA.artworks.some(art => art.id === res))) {
+          return res;
+        }
+      }
+    }
+    return null;
+  });
+
   // Seamlessly transition starting hash fragments to beautiful clean subdirectories in address bar
   useEffect(() => {
     const hash = window.location.hash;
@@ -106,10 +127,19 @@ export default function App() {
       if (path.includes('/quiz') || hash.startsWith('#/quiz')) {
         setIsQuizActive(true);
         setSelectedComicId(null);
+        
+        const searchParams = new URLSearchParams(window.location.search);
+        let res = searchParams.get('result');
+        if (!res && hash.indexOf('?') !== -1) {
+          const hashParams = new URLSearchParams(hash.substring(hash.indexOf('?')));
+          res = hashParams.get('result');
+        }
+        setQuizResultId(res);
         return;
       }
       
       setIsQuizActive(false);
+      setQuizResultId(null);
       let matchedId: string | null = null;
       const pathMatch = path.match(/\/comic\/([^/]+)/);
       if (pathMatch) {
@@ -134,16 +164,19 @@ export default function App() {
       window.history.pushState(null, '', `/quiz/`);
       setIsQuizActive(true);
       setSelectedComicId(null);
+      setQuizResultId(null);
     } else {
       window.history.pushState(null, '', '/');
       setIsQuizActive(false);
       setSelectedComicId(null);
+      setQuizResultId(null);
     }
     window.scrollTo({ top: 0, behavior: 'instant' as any });
   };
 
   const navigateToComic = (id: string | null) => {
     setIsQuizActive(false);
+    setQuizResultId(null);
     if (id) {
       window.history.pushState(null, '', `/comic/${id}/`);
     } else {
@@ -298,11 +331,21 @@ export default function App() {
     let pageDesc = "台灣BL漫畫家玖伊枯的個人官方網站與作品集門戶。收錄熱門連載代表作：《虛假的戀愛訊號》、《過氣男優的我竟然成為了微積分補教名師》、《要怎麼跟龍談戀愛》閱讀渠道與最新延伸作畫日常。";
     let documentTitle = "玖伊枯 | 作品集 (joyqul.tw)";
 
+    const sharedComic = quizResultId ? data.artworks.find(art => art.id === quizResultId) : null;
+    const sharedDetail = quizResultId ? COMIC_DETAILS[quizResultId] : null;
+
     if (isQuizActive) {
       pagePath = '/quiz/';
-      pageTitle = "命定推薦測驗 | 玖伊枯 作品集";
-      pageDesc = "回答幾個簡單的趣味選擇題，玖伊枯帶你瞬間找出符合你喜好、最好看最對味的原創耽美/日常推薦作品！";
-      documentTitle = "命定推薦測驗 | 玖伊枯 作品集 (joyqul.tw)";
+      if (quizResultId && sharedComic) {
+        const titleForResult = sharedDetail ? sharedDetail.title : sharedComic.title;
+        pageTitle = `命定推薦代表作：《${titleForResult}》 | 玖伊枯 作品集`;
+        pageDesc = `我在玖伊枯作品集命定推薦測驗得到的結果是《${titleForResult}》！快來回答趣味選擇題，找出最適合你的極品耽美原創作品推薦！`;
+        documentTitle = `命定推薦代表作：《${titleForResult}》 | 玖伊枯 作品集 (joyqul.tw)`;
+      } else {
+        pageTitle = "命定推薦測驗 | 玖伊枯 作品集";
+        pageDesc = "回答幾個簡單的趣味選擇題，玖伊枯帶你瞬間找出符合你喜好、最好看最對味的原創耽美/日常推薦作品！";
+        documentTitle = "命定推薦測驗 | 玖伊枯 作品集 (joyqul.tw)";
+      }
     } else if (selectedComicId && displayName) {
       pagePath = `/comic/${selectedComicId}/`;
       pageTitle = `《${displayName}》線上連載與延伸連結 | 玖伊枯 作品集`;
@@ -311,7 +354,7 @@ export default function App() {
     }
 
     // Obtain image URL from the current comic data fallback to default avatar
-    const rawImage = mainComic?.imageUrl || '/assets/joyqul_avatar.webp';
+    const rawImage = (isQuizActive && sharedComic?.imageUrl) || mainComic?.imageUrl || '/assets/joyqul_avatar.webp';
     
     // Normalize path to strip './' or double leading slashes which confuse social crawlers and search index bots
     let cleanAssetPath = rawImage;
@@ -327,7 +370,7 @@ export default function App() {
       : `https://joyqul.tw/${cleanAssetPath}`;
 
     const pageUrl = isQuizActive
-      ? 'https://joyqul.tw/quiz/'
+      ? (quizResultId ? `https://joyqul.tw/quiz/?result=${quizResultId}` : 'https://joyqul.tw/quiz/')
       : selectedComicId 
         ? `https://joyqul.tw/comic/${selectedComicId}/`
         : 'https://joyqul.tw/';
@@ -367,7 +410,7 @@ export default function App() {
         cookie_flags: 'SameSite=None;Secure'
       });
     }
-  }, [selectedComicId, displayName, detail, mainComic, isQuizActive]);
+  }, [selectedComicId, displayName, detail, mainComic, isQuizActive, quizResultId]);
 
   const onSocialClick = (platform: string, label: string, url: string) => {
     trackClick(`social_${platform}`, label, { url });

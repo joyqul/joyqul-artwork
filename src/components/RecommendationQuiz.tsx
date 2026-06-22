@@ -118,6 +118,7 @@ export function RecommendationQuiz({
     // Clear URL query parameter ONLY if explicitly requested (e.g., clicking re-take)
     if (clearUrl && window.history && window.history.replaceState) {
       window.history.replaceState(null, '', '/quiz/');
+      window.dispatchEvent(new Event('popstate'));
     }
     setSharedResultId(null);
     setHasTakenQuiz(true);
@@ -175,6 +176,7 @@ export function RecommendationQuiz({
 
       if (window.history && window.history.pushState) {
         window.history.pushState(null, '', `/quiz/?result=${bestComicId}&pct=${percentage}`);
+        window.dispatchEvent(new Event('popstate'));
       }
 
       setHasTakenQuiz(true);
