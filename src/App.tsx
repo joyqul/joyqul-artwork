@@ -40,8 +40,8 @@ export default function App() {
   // Active banner duration check (July 1st to July 14th, 2026 inclusive, in Taipei Time / UTC+8)
   const isFamiStoreActive = (): boolean => {
     const now = new Date();
-    const start = new Date("2026-07-01T00:00:00+08:00");
-    const end = new Date("2026-07-14T23:59:59+08:00");
+    const start = new Date("2026-07-02T21:00:00+08:00");
+    const end = new Date("2026-07-10T23:59:59+08:00");
     return now >= start && now <= end;
   };
 
