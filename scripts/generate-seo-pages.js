@@ -223,6 +223,61 @@ comics.forEach(comic => {
   fs.writeFileSync(path.join(outputResultDir, 'index.html'), seoResultHtml);
 });
 
+// Create Special Thanks redirect page
+const specThanksTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集";
+const specThanksDesc = "「即日起至 7/10 募資中」、「商品製作中」與「感謝贊助名單」。高能訊號工作室 (Hyper Biosignal Studio) 官方募資周邊企劃專屬頁。";
+const specThanksImage = resolveHashedAsset('false_love_signal_banner');
+const specThanksImageUrl = `https://joyqul.tw${specThanksImage}`;
+const specThanksUrl = "https://joyqul.tw/false_love_signal/hyper_biosignal/special_thanks/";
+
+const specThanksHtml = `<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/webp" href="${resolveHashedAsset('joyqul_avatar')}" />
+    
+    <!-- Primary Search Engine Optimization (SEO) Metadata -->
+    <title>${specThanksTitle}</title>
+    <meta name="description" content="${specThanksDesc}" />
+    <meta name="keywords" content="Joyqul, 玖伊枯, 虛假的戀愛訊號, 高能訊號工作室, 募資中, 商品製作中, 感謝贊助名單" />
+    <link rel="canonical" href="${specThanksUrl}" />
+
+    <!-- Open Graph / Web Crawler sharing cards -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="${specThanksTitle}" />
+    <meta property="og:description" content="${specThanksDesc}" />
+    <meta property="og:url" content="${specThanksUrl}" />
+    <meta property="og:image" content="${specThanksImageUrl}" />
+
+    <!-- Twitter / X sharing cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${specThanksTitle}" />
+    <meta name="twitter:description" content="${specThanksDesc}" />
+    <meta name="twitter:image" content="${specThanksImageUrl}" />
+
+    <!-- Instant client redirection logic to the SPA hashtag path -->
+    <meta http-equiv="refresh" content="0; url=/#/false_love_signal/hyper_biosignal/special_thanks" />
+    <script>
+      // Seamlessly transfer page context back to React client router
+      const urlParams = window.location.search;
+      const spaTarget = window.location.protocol + '//' + window.location.host + '/#/false_love_signal/hyper_biosignal/special_thanks' + (urlParams ? urlParams : '');
+      window.location.replace(spaTarget);
+    </script>
+  </head>
+  <body style="font-family: system-ui, -apple-system, sans-serif; background: #FAF8F5; color: #403C35; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center;">
+    <div>
+      <h3 style="font-weight: 500;">正在為您導向至《虛假的戀愛訊號》周邊預購專頁...</h3>
+      <p style="font-size: 14px; color: #8F8778;">若您的瀏覽器沒有自動跳轉，請 <a href="/#/false_love_signal/hyper_biosignal/special_thanks" style="color: #BCA374; font-weight: bold; text-decoration: underline;">點擊此處</a> 直接開啟。</p>
+    </div>
+  </body>
+</html>
+`;
+
+const specThanksDir = path.join(distDir, 'false_love_signal', 'hyper_biosignal', 'special_thanks');
+fs.mkdirSync(specThanksDir, { recursive: true });
+fs.writeFileSync(path.join(specThanksDir, 'index.html'), specThanksHtml);
+
 // Copy original non-hashed joyqul_avatar.webp to dist/assets/ as a robust static fallback
 const sourceAvatar = path.join(process.cwd(), 'assets', 'joyqul_avatar.webp');
 const targetAvatar = path.join(distDir, 'assets', 'joyqul_avatar.webp');

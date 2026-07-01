@@ -16,6 +16,7 @@ import { ComicList } from './components/ComicList';
 import { ComicDetailsView } from './components/ComicDetailsView';
 import { RecommendationQuiz } from './components/RecommendationQuiz';
 import { RecommendationBanner } from './components/RecommendationBanner';
+import { SpecialThanks } from './hbstudio/SpecialThanks';
 
 declare global {
   interface Window {
@@ -44,6 +45,14 @@ export default function App() {
     const end = new Date("2026-07-10T23:59:59+08:00");
     return now >= start && now <= end;
   };
+
+  const [isSpecialThanksActive, setIsSpecialThanksActive] = useState<boolean>(() => {
+    const hash = window.location.hash;
+    const path = window.location.pathname;
+    return hash.startsWith('#/false_love_signal/hyper_biosignal/special_thanks') || 
+           hash.startsWith('#//false_love_signal/hyper_biosignal/special_thanks') ||
+           path.includes('false_love_signal/hyper_biosignal/special_thanks');
+  });
 
   // Single-page hybrid router supporting both clean path slugs and fallback hashes
   const [isQuizActive, setIsQuizActive] = useState<boolean>(() => {
@@ -110,15 +119,25 @@ export default function App() {
     }
     const finalSearch = search || hashSearch;
 
-    if (hash.startsWith('#/comic/')) {
+    if (hash.startsWith('#/false_love_signal/hyper_biosignal/special_thanks') ||
+        hash.startsWith('#//false_love_signal/hyper_biosignal/special_thanks')) {
+      window.history.replaceState(null, '', `/false_love_signal/hyper_biosignal/special_thanks/${finalSearch}`);
+      setIsSpecialThanksActive(true);
+      setIsQuizActive(false);
+      setSelectedComicId(null);
+    } else if (isSpecialThanksActive) {
+      window.history.replaceState(null, '', `/false_love_signal/hyper_biosignal/special_thanks/${finalSearch}`);
+    } else if (hash.startsWith('#/comic/')) {
       const id = hash.split('?')[0].replace('#/comic/', '');
       window.history.replaceState(null, '', `/comic/${id}/${finalSearch}`);
       setSelectedComicId(id);
       setIsQuizActive(false);
+      setIsSpecialThanksActive(false);
     } else if (hash.startsWith('#/quiz')) {
       window.history.replaceState(null, '', `/quiz/${finalSearch}`);
       setIsQuizActive(true);
       setSelectedComicId(null);
+      setIsSpecialThanksActive(false);
     } else if (isQuizActive) {
       window.history.replaceState(null, '', `/quiz/${finalSearch}`);
     } else if (selectedComicId) {
@@ -127,12 +146,23 @@ export default function App() {
     } else {
       window.history.replaceState(null, '', `/${finalSearch}`);
     }
-  }, [selectedComicId, isQuizActive]);
+  }, [selectedComicId, isQuizActive, isSpecialThanksActive]);
 
   useEffect(() => {
     const handlePopState = () => {
       const hash = window.location.hash;
       const path = window.location.pathname;
+      
+      if (path.includes('false_love_signal/hyper_biosignal/special_thanks') || 
+          hash.startsWith('#/false_love_signal/hyper_biosignal/special_thanks') ||
+          hash.startsWith('#//false_love_signal/hyper_biosignal/special_thanks')) {
+        setIsSpecialThanksActive(true);
+        setIsQuizActive(false);
+        setSelectedComicId(null);
+        setQuizResultId(null);
+        return;
+      }
+      setIsSpecialThanksActive(false);
       
       if (path.includes('/quiz') || hash.startsWith('#/quiz')) {
         setIsQuizActive(true);
@@ -180,6 +210,7 @@ export default function App() {
   }, []);
 
   const navigateToQuiz = (active: boolean) => {
+    setIsSpecialThanksActive(false);
     if (active) {
       window.history.pushState(null, '', `/quiz/`);
       setIsQuizActive(true);
@@ -195,6 +226,7 @@ export default function App() {
   };
 
   const navigateToComic = (id: string | null) => {
+    setIsSpecialThanksActive(false);
     setIsQuizActive(false);
     setQuizResultId(null);
     if (id) {
@@ -203,6 +235,23 @@ export default function App() {
       window.history.pushState(null, '', '/');
     }
     setSelectedComicId(id);
+    window.scrollTo({ top: 0, behavior: 'instant' as any });
+  };
+
+  const navigateToSpecialThanks = (active: boolean) => {
+    if (active) {
+      window.history.pushState(null, '', `/false_love_signal/hyper_biosignal/special_thanks/`);
+      setIsSpecialThanksActive(true);
+      setIsQuizActive(false);
+      setSelectedComicId(null);
+      setQuizResultId(null);
+    } else {
+      window.history.pushState(null, '', '/');
+      setIsSpecialThanksActive(false);
+      setIsQuizActive(false);
+      setSelectedComicId(null);
+      setQuizResultId(null);
+    }
     window.scrollTo({ top: 0, behavior: 'instant' as any });
   };
 
@@ -354,7 +403,12 @@ export default function App() {
     const sharedComic = quizResultId ? data.artworks.find(art => art.id === quizResultId) : null;
     const sharedDetail = quizResultId ? COMIC_DETAILS[quizResultId] : null;
 
-    if (isQuizActive) {
+    if (isSpecialThanksActive) {
+      pagePath = '/false_love_signal/hyper_biosignal/special_thanks/';
+      pageTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集";
+      pageDesc = "「即日起至 7/10 募資中」、「商品製作中」與「感謝贊助名單」。高能訊號工作室 (Hyper Biosignal Studio) 官方募資周邊企劃專屬頁。";
+      documentTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集 (joyqul.tw)";
+    } else if (isQuizActive) {
       pagePath = '/quiz/';
       if (quizResultId && sharedComic) {
         const titleForResult = sharedDetail ? sharedDetail.title : sharedComic.title;
@@ -389,11 +443,13 @@ export default function App() {
       ? rawImage 
       : `https://joyqul.tw/${cleanAssetPath}`;
 
-    const pageUrl = isQuizActive
-      ? (quizResultId ? `https://joyqul.tw/quiz/?result=${quizResultId}` : 'https://joyqul.tw/quiz/')
-      : selectedComicId 
-        ? `https://joyqul.tw/comic/${selectedComicId}/`
-        : 'https://joyqul.tw/';
+    const pageUrl = isSpecialThanksActive
+      ? 'https://joyqul.tw/false_love_signal/hyper_biosignal/special_thanks/'
+      : isQuizActive
+        ? (quizResultId ? `https://joyqul.tw/quiz/?result=${quizResultId}` : 'https://joyqul.tw/quiz/')
+        : selectedComicId 
+          ? `https://joyqul.tw/comic/${selectedComicId}/`
+          : 'https://joyqul.tw/';
 
     // Update document title first
     document.title = documentTitle;
@@ -430,7 +486,7 @@ export default function App() {
         cookie_flags: 'SameSite=None;Secure'
       });
     }
-  }, [selectedComicId, displayName, detail, mainComic, isQuizActive, quizResultId]);
+  }, [selectedComicId, displayName, detail, mainComic, isQuizActive, quizResultId, isSpecialThanksActive]);
 
   const onSocialClick = (platform: string, label: string, url: string) => {
     trackClick(`social_${platform}`, label, { url });
@@ -474,7 +530,13 @@ export default function App() {
       {/* Main minimalist Portaly canvas container */}
       <div className="max-w-xl mx-auto px-5 pt-8">
         
-        {isQuizActive ? (
+        {isSpecialThanksActive ? (
+          /* SPECIAL THANKS PAGE */
+          <SpecialThanks 
+            onBackToHome={() => navigateToSpecialThanks(false)}
+            onTrackClick={trackClick}
+          />
+        ) : isQuizActive ? (
           /* RECOMMENDATION QUIZ VIEW */
           <RecommendationQuiz 
             artworks={data.artworks}
