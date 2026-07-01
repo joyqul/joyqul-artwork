@@ -228,7 +228,7 @@ const specThanksTitle = "《虛假的戀愛訊號》周邊預購感謝名單與�
 const specThanksDesc = "「即日起至 7/10 募資中」、「商品製作中」與「感謝贊助名單」。高能訊號工作室 (Hyper Biosignal Studio) 官方募資周邊企劃專屬頁。";
 const specThanksImage = resolveHashedAsset('false_love_signal_banner');
 const specThanksImageUrl = `https://joyqul.tw${specThanksImage}`;
-const specThanksUrl = "https://joyqul.tw/false_love_signal/hyper_biosignal/special_thanks/";
+const specThanksUrl = "https://joyqul.tw/false_love_signal/2026_special_thanks/";
 
 const specThanksHtml = `<!doctype html>
 <html lang="zh-Hant">
@@ -257,24 +257,24 @@ const specThanksHtml = `<!doctype html>
     <meta name="twitter:image" content="${specThanksImageUrl}" />
 
     <!-- Instant client redirection logic to the SPA hashtag path -->
-    <meta http-equiv="refresh" content="0; url=/#/false_love_signal/hyper_biosignal/special_thanks" />
+    <meta http-equiv="refresh" content="0; url=/#/false_love_signal/2026_special_thanks" />
     <script>
       // Seamlessly transfer page context back to React client router
       const urlParams = window.location.search;
-      const spaTarget = window.location.protocol + '//' + window.location.host + '/#/false_love_signal/hyper_biosignal/special_thanks' + (urlParams ? urlParams : '');
+      const spaTarget = window.location.protocol + '//' + window.location.host + '/#/false_love_signal/2026_special_thanks' + (urlParams ? urlParams : '');
       window.location.replace(spaTarget);
     </script>
   </head>
   <body style="font-family: system-ui, -apple-system, sans-serif; background: #FAF8F5; color: #403C35; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center;">
     <div>
       <h3 style="font-weight: 500;">正在為您導向至《虛假的戀愛訊號》周邊預購專頁...</h3>
-      <p style="font-size: 14px; color: #8F8778;">若您的瀏覽器沒有自動跳轉，請 <a href="/#/false_love_signal/hyper_biosignal/special_thanks" style="color: #BCA374; font-weight: bold; text-decoration: underline;">點擊此處</a> 直接開啟。</p>
+      <p style="font-size: 14px; color: #8F8778;">若您的瀏覽器沒有自動跳轉，請 <a href="/#/false_love_signal/2026_special_thanks" style="color: #BCA374; font-weight: bold; text-decoration: underline;">點擊此處</a> 直接開啟。</p>
     </div>
   </body>
 </html>
 `;
 
-const specThanksDir = path.join(distDir, 'false_love_signal', 'hyper_biosignal', 'special_thanks');
+const specThanksDir = path.join(distDir, 'false_love_signal', '2026_special_thanks');
 fs.mkdirSync(specThanksDir, { recursive: true });
 fs.writeFileSync(path.join(specThanksDir, 'index.html'), specThanksHtml);
 

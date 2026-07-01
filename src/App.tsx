@@ -49,9 +49,9 @@ export default function App() {
   const [isSpecialThanksActive, setIsSpecialThanksActive] = useState<boolean>(() => {
     const hash = window.location.hash;
     const path = window.location.pathname;
-    return hash.startsWith('#/false_love_signal/hyper_biosignal/special_thanks') || 
-           hash.startsWith('#//false_love_signal/hyper_biosignal/special_thanks') ||
-           path.includes('false_love_signal/hyper_biosignal/special_thanks');
+    return hash.startsWith('#/false_love_signal/2026_special_thanks') || 
+           hash.startsWith('#//false_love_signal/2026_special_thanks') ||
+           path.includes('false_love_signal/2026_special_thanks');
   });
 
   // Single-page hybrid router supporting both clean path slugs and fallback hashes
@@ -119,14 +119,14 @@ export default function App() {
     }
     const finalSearch = search || hashSearch;
 
-    if (hash.startsWith('#/false_love_signal/hyper_biosignal/special_thanks') ||
-        hash.startsWith('#//false_love_signal/hyper_biosignal/special_thanks')) {
-      window.history.replaceState(null, '', `/false_love_signal/hyper_biosignal/special_thanks/${finalSearch}`);
+    if (hash.startsWith('#/false_love_signal/2026_special_thanks') ||
+        hash.startsWith('#//false_love_signal/2026_special_thanks')) {
+      window.history.replaceState(null, '', `/false_love_signal/2026_special_thanks/${finalSearch}`);
       setIsSpecialThanksActive(true);
       setIsQuizActive(false);
       setSelectedComicId(null);
     } else if (isSpecialThanksActive) {
-      window.history.replaceState(null, '', `/false_love_signal/hyper_biosignal/special_thanks/${finalSearch}`);
+      window.history.replaceState(null, '', `/false_love_signal/2026_special_thanks/${finalSearch}`);
     } else if (hash.startsWith('#/comic/')) {
       const id = hash.split('?')[0].replace('#/comic/', '');
       window.history.replaceState(null, '', `/comic/${id}/${finalSearch}`);
@@ -153,9 +153,9 @@ export default function App() {
       const hash = window.location.hash;
       const path = window.location.pathname;
       
-      if (path.includes('false_love_signal/hyper_biosignal/special_thanks') || 
-          hash.startsWith('#/false_love_signal/hyper_biosignal/special_thanks') ||
-          hash.startsWith('#//false_love_signal/hyper_biosignal/special_thanks')) {
+      if (path.includes('false_love_signal/2026_special_thanks') || 
+          hash.startsWith('#/false_love_signal/2026_special_thanks') ||
+          hash.startsWith('#//false_love_signal/2026_special_thanks')) {
         setIsSpecialThanksActive(true);
         setIsQuizActive(false);
         setSelectedComicId(null);
@@ -240,7 +240,7 @@ export default function App() {
 
   const navigateToSpecialThanks = (active: boolean) => {
     if (active) {
-      window.history.pushState(null, '', `/false_love_signal/hyper_biosignal/special_thanks/`);
+      window.history.pushState(null, '', `/false_love_signal/2026_special_thanks/`);
       setIsSpecialThanksActive(true);
       setIsQuizActive(false);
       setSelectedComicId(null);
@@ -404,7 +404,7 @@ export default function App() {
     const sharedDetail = quizResultId ? COMIC_DETAILS[quizResultId] : null;
 
     if (isSpecialThanksActive) {
-      pagePath = '/false_love_signal/hyper_biosignal/special_thanks/';
+      pagePath = '/false_love_signal/2026_special_thanks/';
       pageTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集";
       pageDesc = "「即日起至 7/10 募資中」、「商品製作中」與「感謝贊助名單」。高能訊號工作室 (Hyper Biosignal Studio) 官方募資周邊企劃專屬頁。";
       documentTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集 (joyqul.tw)";
@@ -444,7 +444,7 @@ export default function App() {
       : `https://joyqul.tw/${cleanAssetPath}`;
 
     const pageUrl = isSpecialThanksActive
-      ? 'https://joyqul.tw/false_love_signal/hyper_biosignal/special_thanks/'
+      ? 'https://joyqul.tw/false_love_signal/2026_special_thanks/'
       : isQuizActive
         ? (quizResultId ? `https://joyqul.tw/quiz/?result=${quizResultId}` : 'https://joyqul.tw/quiz/')
         : selectedComicId 

@@ -59,7 +59,7 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
   }, []);
 
   const handleShare = async () => {
-    const shareUrl = "https://joyqul.tw/false_love_signal/hyper_biosignal/special_thanks/";
+    const shareUrl = "https://joyqul.tw/false_love_signal/2026_special_thanks/";
     const shareTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集";
     
     onTrackClick('share_special_thanks', '分享特別感謝頁面');
