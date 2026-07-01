@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FamiStoreBanner } from '../components/FamiStoreBanner';
 import { SponsorsData } from './SponsorsData';
-import { ArrowLeft, Calendar, Hourglass, Package, CheckCircle, ExternalLink, Heart, Share2, ChevronLeft, ChevronRight, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Calendar, Hourglass, Package, CheckCircle, ExternalLink, Heart, Share2 } from 'lucide-react';
 import * as Assets from '../../assets';
-import { allImages } from '../../assets/2026_special_thanks';
 
 interface SpecialThanksProps {
   onBackToHome: () => void;
@@ -33,14 +32,13 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
   const [currentTimeText, setCurrentTimeText] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
-  const [showAllImages, setShowAllImages] = useState<boolean>(false);
   const [isPreOrderStarted, setIsPreOrderStarted] = useState<boolean>(false);
   const [productionProgress, setProductionProgress] = useState<number>(0);
 
   useEffect(() => {
     const updateCampaignPhase = () => {
-      const now = new Date();
+      //const now = new Date();
+      const now = new Date("2026-07-02T21:00:01+08:00");
       
       // Taipei Time date parsing (UTC+8)
       const datePreOrderStart = new Date("2026-07-02T21:00:00+08:00");
@@ -94,23 +92,6 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
     const interval = setInterval(updateCampaignPhase, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (selectedImageIndex === null) return;
-    
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setSelectedImageIndex(null);
-      } else if (e.key === 'ArrowRight') {
-        setSelectedImageIndex((prev) => (prev !== null && prev < allImages.length - 1 ? prev + 1 : 0));
-      } else if (e.key === 'ArrowLeft') {
-        setSelectedImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allImages.length - 1));
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedImageIndex]);
 
   const handleShare = async () => {
     const shareUrl = "https://joyqul.tw/false_love_signal/2026_special_thanks/";
@@ -290,7 +271,7 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
                 即日起至 7/10 預購中
               </h2>
               <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-                《虛假的戀愛訊號》實體化周邊預購中！現在就點選下方官方賣場，收藏專專屬於您的心動訊號！
+                《虛假的戀愛訊號》實體化周邊預購中！現在就點選下方官方賣場，收藏專屬於您的心動訊號！
               </p>
 
               {/* Displaying FamiStoreBanner */}
@@ -378,141 +359,7 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
 
         </div>
       )}
-
-      {/* 2026 Special Thanks Commemorative Illustration & Merchandise Preview Showcase */}
-      {(currentPhase === 'PRODUCTION' || currentPhase === 'REDIRECT_FORM') && (
-        <div className="w-full mt-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(#C2A978_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03]" />
-          
-          <div className="w-full flex flex-col items-center text-center relative z-10">
-            <h2 className="text-base font-black text-[#403C35] mb-1.5">
-              預購商品詳細說明頁
-            </h2>
-            <p className="text-[11px] text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-              和賣場放的圖一樣，點擊任一圖片即可放大高畫質檢視。
-            </p>
-
-            {/* Grid Layout */}
-            <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-              {(showAllImages ? allImages : allImages.slice(0, 6)).map((imgSrc, index) => {
-                const meta = IMAGE_METADATA[index];
-                return (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      setSelectedImageIndex(index);
-                      onTrackClick(`view_thanks_image_${meta?.id || index}`, `點擊檢視周邊圖片: ${meta?.title || index}`);
-                    }}
-                    className="flex flex-col bg-[#FAF8F5]/40 rounded-2xl border border-[#C2A978]/15 hover:border-[#C2A978] overflow-hidden cursor-pointer group hover:shadow-md transition-all duration-300 relative"
-                  >
-                    {/* Image container */}
-                    <div className="w-full aspect-square bg-[#FAF8F5] relative overflow-hidden flex items-center justify-center">
-                      <img
-                        src={imgSrc}
-                        alt={meta?.title || `周邊展示 ${index + 1}`}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                        <span className="text-[10px] text-white font-bold bg-[#C2A978] px-2.5 py-1 rounded-full shadow-sm">
-                          放大檢視
-                        </span>
-                      </div>
-                      {/* Category tag */}
-                      {meta?.category && (
-                        <span className="absolute top-2 left-2 text-[8px] font-bold text-[#8F8778] bg-white/95 px-1.5 py-0.5 rounded border border-[#C2A978]/10 shadow-xs z-10">
-                          {meta.category}
-                        </span>
-                      )}
-                    </div>
-                    {/* Label */}
-                    <div className="p-2.5 text-left border-t border-[#C2A978]/10 bg-white">
-                      <h4 className="text-[10px] font-bold text-[#403C35] leading-tight group-hover:text-[#C2A978] transition-colors truncate">
-                        {meta?.title || `周邊限定特製 #${index + 1}`}
-                      </h4>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Toggle Expand / Collapse Button */}
-            <button
-              onClick={() => {
-                setShowAllImages(!showAllImages);
-                onTrackClick('toggle_thanks_gallery', showAllImages ? '收合插畫展示' : '展開完整插畫展示');
-              }}
-              className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#C2A978] hover:text-[#A68F62] bg-[#C2A978]/5 hover:bg-[#C2A978]/10 border border-[#C2A978]/20 rounded-full px-5 py-2.5 transition-all active:scale-95 cursor-pointer"
-            >
-              <span>{showAllImages ? "收合圖片" : `展開完整內容 (共 ${allImages.length} 張)`}</span>
-            </button>
-          </div>
-        </div>
-      )}
-
       </div>
-
-      {/* Lightbox Modal (Fixed overlay) */}
-      {selectedImageIndex !== null && (
-        <div 
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-md p-4 select-none"
-          onClick={() => setSelectedImageIndex(null)}
-        >
-          {/* Close button top right */}
-          <button 
-            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors cursor-pointer z-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedImageIndex(null);
-            }}
-          >
-            <X className="w-6 h-6" />
-          </button>
-
-          {/* Core image area */}
-          <div className="relative max-w-5xl w-full flex items-center justify-center px-4 sm:px-12" onClick={(e) => e.stopPropagation()}>
-            {/* Prev Button */}
-            <button
-              className="absolute left-0 sm:left-4 p-2.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-all active:scale-95 cursor-pointer z-40 hover:bg-white/30"
-              onClick={() => setSelectedImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allImages.length - 1))}
-            >
-              <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8" />
-            </button>
-
-            {/* Active Image */}
-            <div className="flex flex-col items-center max-w-full">
-              <img
-                src={allImages[selectedImageIndex]}
-                alt={IMAGE_METADATA[selectedImageIndex]?.title || `周邊展示 ${selectedImageIndex + 1}`}
-                referrerPolicy="no-referrer"
-                className="max-h-[80vh] md:max-h-[85vh] max-w-full rounded-2xl object-contain border border-white/10 shadow-2xl transition-all duration-300"
-              />
-              
-              {/* Image Description Metadata */}
-              <div className="mt-4 text-center px-4 bg-black/45 py-2.5 rounded-2xl backdrop-blur-xs border border-white/5 max-w-md">
-                <span className="text-[10px] tracking-widest font-bold text-[#C2A978] bg-[#C2A978]/10 border border-[#C2A978]/20 px-2.5 py-0.5 rounded-full">
-                  {IMAGE_METADATA[selectedImageIndex]?.category || "限定回饋特典"}
-                </span>
-                <h3 className="text-white text-sm sm:text-base font-extrabold mt-2">
-                  {IMAGE_METADATA[selectedImageIndex]?.title || `周邊限定特製 #${selectedImageIndex + 1}`}
-                </h3>
-                <p className="text-slate-400 text-[10px] sm:text-xs mt-1 font-mono">
-                  圖片 {selectedImageIndex + 1} / {allImages.length}
-                </p>
-              </div>
-            </div>
-
-            {/* Next Button */}
-            <button
-              className="absolute right-0 sm:right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-all active:scale-95 cursor-pointer z-40 hover:bg-white/30"
-              onClick={() => setSelectedImageIndex((prev) => (prev !== null && prev < allImages.length - 1 ? prev + 1 : 0))}
-            >
-              <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" />
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
