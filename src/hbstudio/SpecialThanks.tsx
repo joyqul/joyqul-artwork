@@ -149,8 +149,8 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
               style={{
                 width: 
                   currentPhase === 'FUNDRAISING' ? '0%' :
-                  currentPhase === 'PRODUCTION' ? '33.3%' :
-                  currentPhase === 'REDIRECT_FORM' ? '66.6%' : '100%'
+                  currentPhase === 'PRODUCTION' ? '25%' :
+                  currentPhase === 'REDIRECT_FORM' ? '50%' : '75%'
               }}
             />
 
