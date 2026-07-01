@@ -35,18 +35,21 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
   const [copied, setCopied] = useState<boolean>(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [showAllImages, setShowAllImages] = useState<boolean>(false);
+  const [isPreOrderStarted, setIsPreOrderStarted] = useState<boolean>(false);
 
   useEffect(() => {
     const updateCampaignPhase = () => {
       const now = new Date();
       
       // Taipei Time date parsing (UTC+8)
+      const datePreOrderStart = new Date("2026-07-02T21:00:00+08:00");
       const dateFundraisingEnd = new Date("2026-07-10T23:59:59+08:00");
       const dateProductionEnd = new Date("2026-08-08T00:00:00+08:00");
       const dateRedirectStart = new Date("2026-08-08T00:00:00+08:00");
       const dateRedirectEnd = new Date("2026-08-31T23:59:59+08:00");
 
       setCurrentTimeText(now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }));
+      setIsPreOrderStarted(now >= datePreOrderStart);
 
       // Phase 1: Before July 10, 2026
       if (now < dateFundraisingEnd) {
@@ -169,211 +172,217 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
           《虛假的戀愛訊號》周邊預購
         </h1>
         <p className="text-xs text-[#8F8778] mt-1.5 relative z-10 max-w-sm">
-          高能訊號工作室 (Hyper Bio-Signal Studio) 周邊企劃專屬頁
+          {isPreOrderStarted 
+            ? "高能訊號工作室 (Hyper Bio-Signal Studio) 周邊企劃專屬頁" 
+            : "預購商品詳細說明（預購將於 7/2 晚上九點開始）"}
         </p>
 
         {/* Campaign Timeline Progress Visualizer */}
-        <div className="w-full mt-6 bg-[#FAF8F5] p-4 rounded-2xl border border-[#C2A978]/10 relative z-10">
-          <div className="text-[10px] text-right text-[#A69C8E] font-mono mb-2.5">
-            目前台北時間：{currentTimeText || "更新中..."}
-          </div>
-          <div className="grid grid-cols-4 gap-1 relative">
-            {/* Progress line */}
-            <div className="absolute top-[14px] left-[12.5%] right-[12.5%] h-0.5 bg-[#C2A978]/20 -z-10" />
-            <div 
-              className="absolute top-[14px] left-[12.5%] h-0.5 bg-[#C2A978] transition-all duration-1000 -z-10" 
-              style={{
-                width: 
-                  currentPhase === 'FUNDRAISING' ? '0%' :
-                  currentPhase === 'PRODUCTION' ? '25%' :
-                  currentPhase === 'REDIRECT_FORM' ? '50%' : '75%'
-              }}
-            />
-
-            {/* Step 1 */}
-            <div className="flex flex-col items-center">
-              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                currentPhase === 'FUNDRAISING' 
-                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
-                  : 'bg-white border-[#C2A978]/30 text-[#C2A978]'
-              }`}>
-                {currentPhase !== 'FUNDRAISING' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "1"}
-              </div>
-              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'FUNDRAISING' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-              預購中
-              </span>
-              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">~7/10</span>
+        {isPreOrderStarted && (
+          <div className="w-full mt-6 bg-[#FAF8F5] p-4 rounded-2xl border border-[#C2A978]/10 relative z-10">
+            <div className="text-[10px] text-right text-[#A69C8E] font-mono mb-2.5">
+              目前台北時間：{currentTimeText || "更新中..."}
             </div>
+            <div className="grid grid-cols-4 gap-1 relative">
+              {/* Progress line */}
+              <div className="absolute top-[14px] left-[12.5%] right-[12.5%] h-0.5 bg-[#C2A978]/20 -z-10" />
+              <div 
+                className="absolute top-[14px] left-[12.5%] h-0.5 bg-[#C2A978] transition-all duration-1000 -z-10" 
+                style={{
+                  width: 
+                    currentPhase === 'FUNDRAISING' ? '0%' :
+                    currentPhase === 'PRODUCTION' ? '25%' :
+                    currentPhase === 'REDIRECT_FORM' ? '50%' : '75%'
+                }}
+              />
 
-            {/* Step 2 */}
-            <div className="flex flex-col items-center">
-              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                currentPhase === 'PRODUCTION' 
-                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
-                  : currentPhase === 'FUNDRAISING'
-                    ? 'bg-white border-slate-200 text-slate-400'
+              {/* Step 1 */}
+              <div className="flex flex-col items-center">
+                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                  currentPhase === 'FUNDRAISING' 
+                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
                     : 'bg-white border-[#C2A978]/30 text-[#C2A978]'
-              }`}>
-                {currentPhase !== 'FUNDRAISING' && currentPhase !== 'PRODUCTION' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "2"}
+                }`}>
+                  {currentPhase !== 'FUNDRAISING' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "1"}
+                </div>
+                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'FUNDRAISING' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                預購中
+                </span>
+                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">~7/10</span>
               </div>
-              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'PRODUCTION' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                製作中
-              </span>
-              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">7/10~8/8</span>
-            </div>
 
-            {/* Step 3 */}
-            <div className="flex flex-col items-center">
-              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                currentPhase === 'REDIRECT_FORM' 
-                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
-                  : currentPhase === 'THANK_WALL'
-                    ? 'bg-white border-[#C2A978]/30 text-[#C2A978]'
+              {/* Step 2 */}
+              <div className="flex flex-col items-center">
+                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                  currentPhase === 'PRODUCTION' 
+                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+                    : currentPhase === 'FUNDRAISING'
+                      ? 'bg-white border-slate-200 text-slate-400'
+                      : 'bg-white border-[#C2A978]/30 text-[#C2A978]'
+                }`}>
+                  {currentPhase !== 'FUNDRAISING' && currentPhase !== 'PRODUCTION' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "2"}
+                </div>
+                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'PRODUCTION' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                  製作中
+                </span>
+                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">7/10~8/8</span>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center">
+                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                  currentPhase === 'REDIRECT_FORM' 
+                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+                    : currentPhase === 'THANK_WALL'
+                      ? 'bg-white border-[#C2A978]/30 text-[#C2A978]'
+                      : 'bg-white border-slate-200 text-slate-400'
+                }`}>
+                  {currentPhase === 'THANK_WALL' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "3"}
+                </div>
+                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'REDIRECT_FORM' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                  表單填寫
+                </span>
+                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8~8/31</span>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex flex-col items-center">
+                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                  currentPhase === 'THANK_WALL' 
+                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
                     : 'bg-white border-slate-200 text-slate-400'
-              }`}>
-                {currentPhase === 'THANK_WALL' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "3"}
+                }`}>
+                  4
+                </div>
+                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'THANK_WALL' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                  感謝名單
+                </span>
+                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8起</span>
               </div>
-              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'REDIRECT_FORM' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                表單填寫
-              </span>
-              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8~8/31</span>
-            </div>
-
-            {/* Step 4 */}
-            <div className="flex flex-col items-center">
-              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                currentPhase === 'THANK_WALL' 
-                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
-                  : 'bg-white border-slate-200 text-slate-400'
-              }`}>
-                4
-              </div>
-              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'THANK_WALL' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                感謝名單
-              </span>
-              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8起</span>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Core Dynamic Content Container */}
-      <div className="w-full flex flex-col items-center bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm">
-        
-        {/* PHASE 1: FUNDRAISING (Before July 10, 2026) */}
-        {currentPhase === 'FUNDRAISING' && (
-          <div className="w-full flex flex-col items-center text-center page-view-animation">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
-              <Hourglass className="w-7 h-7 animate-spin [animation-duration:8s]" />
-            </div>
-            
-            <span className="px-3 py-1 rounded-full text-xs font-bold text-amber-600 bg-amber-500/10 border border-amber-500/20 mb-2.5">
-              進行中 Phase Active
-            </span>
-            <h2 className="text-lg font-black text-[#403C35] mb-2">
-              即日起至 7/10 募資中
-            </h2>
-            <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-              《虛假的戀愛訊號》實體化周邊企劃熱烈募資預購中！現在就點選下方官方賣場，收藏專屬於您的心動訊號！
-            </p>
-
-            {/* Displaying FamiStoreBanner */}
-            <FamiStoreBanner onTrackClick={onTrackClick} />
-
-            <div className="mt-8 text-[11px] text-[#A69C8E] border-t border-slate-100 pt-4 w-full">
-              預購完成後，請保留您的訂單資訊，以便後續進度追蹤！
-            </div>
-          </div>
-        )}
-
-        {/* PHASE 2: PRODUCTION (July 10 to August 8, 2026) */}
-        {currentPhase === 'PRODUCTION' && (
-          <div className="w-full flex flex-col items-center text-center page-view-animation">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center mb-4">
-              <Package className="w-7 h-7 animate-bounce" />
-            </div>
-            
-            <span className="px-3 py-1 rounded-full text-xs font-bold text-indigo-600 bg-indigo-500/10 border border-indigo-500/20 mb-2.5">
-              製作階段 Crafted Phase
-            </span>
-            <h2 className="text-lg font-black text-[#403C35] mb-2">
-              商品製作中
-            </h2>
-            <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-              感謝各位讀者熱烈支持！募資與預購已於 7/10 順利截止，高能訊號工作室已將所有周邊規格提供予工廠，目前進入高規格的「商品製作中」階段。
-            </p>
-
-            <div className="w-full max-w-md bg-[#FAF8F5] p-4 rounded-2xl border border-indigo-100 flex flex-col gap-2 text-left">
-              <div className="flex justify-between text-xs font-bold text-[#403C35]">
-                <span>印製進度 (Printing Spec)</span>
-                <span className="text-indigo-600">45%</span>
+      {isPreOrderStarted && (
+        <div className="w-full flex flex-col items-center bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm">
+          
+          {/* PHASE 1: FUNDRAISING (Before July 10, 2026) */}
+          {currentPhase === 'FUNDRAISING' && (
+            <div className="w-full flex flex-col items-center text-center page-view-animation">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
+                <Hourglass className="w-7 h-7 animate-spin [animation-duration:8s]" />
               </div>
-              <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000" style={{ width: '45%' }} />
-              </div>
-              <p className="text-[11px] text-[#8F8778] mt-1">
-                ※ 預計將於 8 月初完成印製並進入包裝流程。後續將於 8/8 開放物流寄送問卷填寫，敬請留意本頁面資訊。
+              
+              <span className="px-3 py-1 rounded-full text-xs font-bold text-amber-600 bg-amber-500/10 border border-amber-500/20 mb-2.5">
+                進行中 Phase Active
+              </span>
+              <h2 className="text-lg font-black text-[#403C35] mb-2">
+                即日起至 7/10 預購中
+              </h2>
+              <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
+                《虛假的戀愛訊號》實體化周邊預購中！現在就點選下方官方賣場，收藏專專屬於您的心動訊號！
               </p>
+
+              {/* Displaying FamiStoreBanner */}
+              <FamiStoreBanner onTrackClick={onTrackClick} />
+
+              <div className="mt-8 text-[11px] text-[#A69C8E] border-t border-slate-100 pt-4 w-full">
+                預購完成後，請保留您的訂單資訊，以便後續進度追蹤！
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* PHASE 3: REDIRECT FORM (August 8 to August 31, 2026) */}
-        {currentPhase === 'REDIRECT_FORM' && (
-          <div className="w-full flex flex-col items-center text-center page-view-animation">
-            <div className="w-14 h-14 rounded-2xl bg-[#C2A978]/10 text-[#BCA374] flex items-center justify-center mb-4">
-              <ExternalLink className="w-7 h-7 animate-pulse" />
+          {/* PHASE 2: PRODUCTION (July 10 to August 8, 2026) */}
+          {currentPhase === 'PRODUCTION' && (
+            <div className="w-full flex flex-col items-center text-center page-view-animation">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center mb-4">
+                <Package className="w-7 h-7 animate-bounce" />
+              </div>
+              
+              <span className="px-3 py-1 rounded-full text-xs font-bold text-indigo-600 bg-indigo-500/10 border border-indigo-500/20 mb-2.5">
+                製作階段 Crafted Phase
+              </span>
+              <h2 className="text-lg font-black text-[#403C35] mb-2">
+                商品製作中
+              </h2>
+              <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
+                感謝各位讀者熱烈支持！預購已於 7/10 順利截止，高能訊號工作室已將所有周邊規格提供予工廠，目前進入高規格的「商品製作中」階段。
+              </p>
+
+              <div className="w-full max-w-md bg-[#FAF8F5] p-4 rounded-2xl border border-indigo-100 flex flex-col gap-2 text-left">
+                <div className="flex justify-between text-xs font-bold text-[#403C35]">
+                  <span>印製進度 (Printing Spec)</span>
+                  <span className="text-indigo-600">45%</span>
+                </div>
+                <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000" style={{ width: '45%' }} />
+                </div>
+                <p className="text-[11px] text-[#8F8778] mt-1">
+                  ※ 預計將於 8 月初完成印製並進入包裝流程。後續將於 8/8 開放物流寄送問卷填寫，敬請留意本頁面資訊。
+                </p>
+              </div>
             </div>
-            
-            <span className="px-3 py-1 rounded-full text-xs font-bold text-[#BCA374] bg-[#C2A978]/10 border border-[#C2A978]/20 mb-2.5">
-              即將導向 Redirecting
-            </span>
-            <h2 className="text-lg font-black text-[#403C35] mb-2">
-              正在為您導向至問卷表單
-            </h2>
-            <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-              目前正處於「寄送資訊問卷填寫期」(8/8 ~ 8/31)。系統正在將您安全導向至官方 Google 表單，以便填寫您的寄送與贊助者回饋資料。
-            </p>
+          )}
 
-            <div className="flex items-center gap-2 text-xs text-[#BCA374] font-extrabold animate-bounce mb-4">
-              <span>若網頁沒有自動跳轉，請點擊下方按鈕：</span>
+          {/* PHASE 3: REDIRECT FORM (August 8 to August 31, 2026) */}
+          {currentPhase === 'REDIRECT_FORM' && (
+            <div className="w-full flex flex-col items-center text-center page-view-animation">
+              <div className="w-14 h-14 rounded-2xl bg-[#C2A978]/10 text-[#BCA374] flex items-center justify-center mb-4">
+                <ExternalLink className="w-7 h-7 animate-pulse" />
+              </div>
+              
+              <span className="px-3 py-1 rounded-full text-xs font-bold text-[#BCA374] bg-[#C2A978]/10 border border-[#C2A978]/20 mb-2.5">
+                即將導向 Redirecting
+              </span>
+              <h2 className="text-lg font-black text-[#403C35] mb-2">
+                正在為您導向至問卷表單
+              </h2>
+              <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
+                目前正處於「寄送資訊問卷填寫期」(8/8 ~ 8/31)。系統正在將您安全導向至官方 Google 表單，以便填寫您的寄送與贊助者回饋資料。
+              </p>
+
+              <div className="flex items-center gap-2 text-xs text-[#BCA374] font-extrabold animate-bounce mb-4">
+                <span>若網頁沒有自動跳轉，請點擊下方按鈕：</span>
+              </div>
+
+              <a
+                href="https://forms.gle/K2ZYn2amjA9APRAP7"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-full bg-[#C2A978] hover:bg-[#A68F62] text-white text-xs font-extrabold tracking-widest inline-flex items-center gap-1.5 transition-all"
+              >
+                <span>手動開啟表單</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
             </div>
+          )}
 
-            <a
-              href="https://forms.gle/K2ZYn2amjA9APRAP7"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 rounded-full bg-[#C2A978] hover:bg-[#A68F62] text-white text-xs font-extrabold tracking-widest inline-flex items-center gap-1.5 transition-all"
-            >
-              <span>手動開啟表單</span>
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          </div>
-        )}
+          {/* PHASE 4: THANK_WALL (After August 8, active when redirect is not active) */}
+          {currentPhase === 'THANK_WALL' && (
+            <div className="w-full flex flex-col items-center page-view-animation">
+              <div className="w-14 h-14 rounded-2xl bg-[#C2A978]/10 text-[#BCA374] flex items-center justify-center mb-4">
+                <Heart className="w-7 h-7 text-[#BCA374]" />
+              </div>
+              
+              <span className="px-3 py-1 rounded-full text-xs font-bold text-[#BCA374] bg-[#C2A978]/10 border border-[#C2A978]/20 mb-2.5">
+                感謝贊助 Special Thanks Wall
+              </span>
+              <h2 className="text-lg font-black text-[#403C35] mb-2 text-center">
+                感謝贊助名單
+              </h2>
+              <p className="text-xs text-[#8F8778] max-w-sm mb-8 text-center leading-relaxed">
+                本企劃得以完美實現，皆得益於下列各位高能觀測者、讀者與贊助同仁。你們的每一份能量，都化作了真實的訊號，深表謝忱！
+              </p>
 
-        {/* PHASE 4: THANK_WALL (After August 8, active when redirect is not active) */}
-        {currentPhase === 'THANK_WALL' && (
-          <div className="w-full flex flex-col items-center page-view-animation">
-            <div className="w-14 h-14 rounded-2xl bg-[#C2A978]/10 text-[#BCA374] flex items-center justify-center mb-4">
-              <Heart className="w-7 h-7 text-[#BCA374]" />
+              {/* Render SponsorsData list component */}
+              <SponsorsData onBackToHome={onBackToHome} />
             </div>
-            
-            <span className="px-3 py-1 rounded-full text-xs font-bold text-[#BCA374] bg-[#C2A978]/10 border border-[#C2A978]/20 mb-2.5">
-              感謝贊助 Special Thanks Wall
-            </span>
-            <h2 className="text-lg font-black text-[#403C35] mb-2 text-center">
-              感謝贊助名單
-            </h2>
-            <p className="text-xs text-[#8F8778] max-w-sm mb-8 text-center leading-relaxed">
-              本企劃得以完美實現，皆得益於下列各位高能觀測者、讀者與贊助同仁。你們的每一份能量，都化作了真實的訊號，深表謝忱！
-            </p>
+          )}
 
-            {/* Render SponsorsData list component */}
-            <SponsorsData onBackToHome={onBackToHome} />
-          </div>
-        )}
-
-      </div>
+        </div>
+      )}
 
       {/* 2026 Special Thanks Commemorative Illustration & Merchandise Preview Showcase */}
       <div className="w-full mt-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm relative overflow-hidden">
