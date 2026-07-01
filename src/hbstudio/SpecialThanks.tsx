@@ -53,8 +53,8 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
     };
 
     updateCampaignPhase();
-    // Check every minute
-    const interval = setInterval(updateCampaignPhase, 60000);
+    // Check every second to keep the clock ticking dynamically
+    const interval = setInterval(updateCampaignPhase, 1000);
     return () => clearInterval(interval);
   }, []);
 
