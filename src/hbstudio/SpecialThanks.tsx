@@ -36,6 +36,7 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [showAllImages, setShowAllImages] = useState<boolean>(false);
   const [isPreOrderStarted, setIsPreOrderStarted] = useState<boolean>(false);
+  const [productionProgress, setProductionProgress] = useState<number>(0);
 
   useEffect(() => {
     const updateCampaignPhase = () => {
@@ -50,6 +51,20 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
 
       setCurrentTimeText(now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }));
       setIsPreOrderStarted(now >= datePreOrderStart);
+
+      // Calculate production progress dynamically
+      const totalProductionMs = dateProductionEnd.getTime() - dateFundraisingEnd.getTime();
+      const elapsedProductionMs = now.getTime() - dateFundraisingEnd.getTime();
+      
+      let progress = 0;
+      if (now >= dateProductionEnd) {
+        progress = 100;
+      } else if (now >= dateFundraisingEnd) {
+        progress = Math.min(100, Math.max(0, Math.round((elapsedProductionMs / totalProductionMs) * 100)));
+      } else {
+        progress = 0;
+      }
+      setProductionProgress(progress);
 
       // Phase 1: Before July 10, 2026
       if (now < dateFundraisingEnd) {
@@ -179,90 +194,89 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
         </p>
 
         {/* Campaign Timeline Progress Visualizer */}
-        {isPreOrderStarted && (
-          <div className="w-full mt-6 bg-[#FAF8F5] p-4 rounded-2xl border border-[#C2A978]/10 relative z-10">
-            <div className="text-[10px] text-right text-[#A69C8E] font-mono mb-2.5">
-              目前台北時間：{currentTimeText || "更新中..."}
+        <div className="w-full mt-6 bg-[#FAF8F5] p-4 rounded-2xl border border-[#C2A978]/10 relative z-10">
+          <div className="text-[10px] text-right text-[#A69C8E] font-mono mb-2.5">
+            目前台北時間：{currentTimeText || "更新中..."}
+          </div>
+          <div className="grid grid-cols-4 gap-1 relative">
+            {/* Progress line */}
+            <div className="absolute top-[14px] left-[12.5%] right-[12.5%] h-0.5 bg-[#C2A978]/20 -z-10" />
+            <div 
+              className="absolute top-[14px] left-[12.5%] h-0.5 bg-[#C2A978] transition-all duration-1000 -z-10" 
+              style={{
+                width: 
+                  !isPreOrderStarted ? '0%' :
+                  currentPhase === 'FUNDRAISING' ? '0%' :
+                  currentPhase === 'PRODUCTION' ? '25%' :
+                  currentPhase === 'REDIRECT_FORM' ? '50%' : '75%'
+              }}
+            />
+
+            {/* Step 1 */}
+            <div className="flex flex-col items-center">
+              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                currentPhase === 'FUNDRAISING' && isPreOrderStarted
+                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+                  : 'bg-white border-[#C2A978]/30 text-[#C2A978]'
+              }`}>
+                {currentPhase !== 'FUNDRAISING' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "1"}
+              </div>
+              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'FUNDRAISING' && isPreOrderStarted ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+              預購中
+              </span>
+              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">7/2 21:00 PM ~ 7/10</span>
             </div>
-            <div className="grid grid-cols-4 gap-1 relative">
-              {/* Progress line */}
-              <div className="absolute top-[14px] left-[12.5%] right-[12.5%] h-0.5 bg-[#C2A978]/20 -z-10" />
-              <div 
-                className="absolute top-[14px] left-[12.5%] h-0.5 bg-[#C2A978] transition-all duration-1000 -z-10" 
-                style={{
-                  width: 
-                    currentPhase === 'FUNDRAISING' ? '0%' :
-                    currentPhase === 'PRODUCTION' ? '25%' :
-                    currentPhase === 'REDIRECT_FORM' ? '50%' : '75%'
-                }}
-              />
 
-              {/* Step 1 */}
-              <div className="flex flex-col items-center">
-                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                  currentPhase === 'FUNDRAISING' 
-                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+            {/* Step 2 */}
+            <div className="flex flex-col items-center">
+              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                currentPhase === 'PRODUCTION' 
+                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+                  : currentPhase === 'FUNDRAISING'
+                    ? 'bg-white border-slate-200 text-slate-400'
                     : 'bg-white border-[#C2A978]/30 text-[#C2A978]'
-                }`}>
-                  {currentPhase !== 'FUNDRAISING' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "1"}
-                </div>
-                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'FUNDRAISING' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                預購中
-                </span>
-                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">~7/10</span>
+              }`}>
+                {currentPhase !== 'FUNDRAISING' && currentPhase !== 'PRODUCTION' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "2"}
               </div>
+              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'PRODUCTION' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                製作中
+              </span>
+              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">7/10~8/8</span>
+            </div>
 
-              {/* Step 2 */}
-              <div className="flex flex-col items-center">
-                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                  currentPhase === 'PRODUCTION' 
-                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
-                    : currentPhase === 'FUNDRAISING'
-                      ? 'bg-white border-slate-200 text-slate-400'
-                      : 'bg-white border-[#C2A978]/30 text-[#C2A978]'
-                }`}>
-                  {currentPhase !== 'FUNDRAISING' && currentPhase !== 'PRODUCTION' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "2"}
-                </div>
-                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'PRODUCTION' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                  製作中
-                </span>
-                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">7/10~8/8</span>
-              </div>
-
-              {/* Step 3 */}
-              <div className="flex flex-col items-center">
-                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                  currentPhase === 'REDIRECT_FORM' 
-                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
-                    : currentPhase === 'THANK_WALL'
-                      ? 'bg-white border-[#C2A978]/30 text-[#C2A978]'
-                      : 'bg-white border-slate-200 text-slate-400'
-                }`}>
-                  {currentPhase === 'THANK_WALL' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "3"}
-                </div>
-                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'REDIRECT_FORM' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                  表單填寫
-                </span>
-                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8~8/31</span>
-              </div>
-
-              {/* Step 4 */}
-              <div className="flex flex-col items-center">
-                <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
-                  currentPhase === 'THANK_WALL' 
-                    ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+            {/* Step 3 */}
+            <div className="flex flex-col items-center">
+              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                currentPhase === 'REDIRECT_FORM' 
+                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+                  : currentPhase === 'THANK_WALL'
+                    ? 'bg-white border-[#C2A978]/30 text-[#C2A978]'
                     : 'bg-white border-slate-200 text-slate-400'
-                }`}>
-                  4
-                </div>
-                <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'THANK_WALL' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
-                  感謝名單
-                </span>
-                <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8起</span>
+              }`}>
+                {currentPhase === 'THANK_WALL' ? <CheckCircle className="w-4 h-4 text-[#C2A978]" /> : "3"}
               </div>
+              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'REDIRECT_FORM' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                表單填寫
+              </span>
+              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8~8/31</span>
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex flex-col items-center">
+              <div className={`w-7.5 h-7.5 rounded-full flex items-center justify-center border text-[10px] font-bold transition-all ${
+                currentPhase === 'THANK_WALL' 
+                  ? 'bg-[#C2A978] border-[#C2A978] text-white ring-4 ring-[#C2A978]/10 shadow-sm' 
+                  : 'bg-white border-slate-200 text-slate-400'
+              }`}>
+                4
+              </div>
+              <span className={`text-[10px] font-bold mt-1.5 ${currentPhase === 'THANK_WALL' ? 'text-[#403C35]' : 'text-[#8F8778]'}`}>
+                感謝名單
+              </span>
+              <span className="text-[8px] text-[#A69C8E] font-mono mt-0.5">8/8起</span>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Core Dynamic Content Container */}
@@ -272,13 +286,6 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
           {/* PHASE 1: FUNDRAISING (Before July 10, 2026) */}
           {currentPhase === 'FUNDRAISING' && (
             <div className="w-full flex flex-col items-center text-center page-view-animation">
-              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
-                <Hourglass className="w-7 h-7 animate-spin [animation-duration:8s]" />
-              </div>
-              
-              <span className="px-3 py-1 rounded-full text-xs font-bold text-amber-600 bg-amber-500/10 border border-amber-500/20 mb-2.5">
-                進行中 Phase Active
-              </span>
               <h2 className="text-lg font-black text-[#403C35] mb-2">
                 即日起至 7/10 預購中
               </h2>
@@ -298,13 +305,6 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
           {/* PHASE 2: PRODUCTION (July 10 to August 8, 2026) */}
           {currentPhase === 'PRODUCTION' && (
             <div className="w-full flex flex-col items-center text-center page-view-animation">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center mb-4">
-                <Package className="w-7 h-7 animate-bounce" />
-              </div>
-              
-              <span className="px-3 py-1 rounded-full text-xs font-bold text-indigo-600 bg-indigo-500/10 border border-indigo-500/20 mb-2.5">
-                製作階段 Crafted Phase
-              </span>
               <h2 className="text-lg font-black text-[#403C35] mb-2">
                 商品製作中
               </h2>
@@ -314,11 +314,11 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
 
               <div className="w-full max-w-md bg-[#FAF8F5] p-4 rounded-2xl border border-indigo-100 flex flex-col gap-2 text-left">
                 <div className="flex justify-between text-xs font-bold text-[#403C35]">
-                  <span>印製進度 (Printing Spec)</span>
-                  <span className="text-indigo-600">45%</span>
+                  <span>印製進度</span>
+                  <span className="text-indigo-600">{productionProgress}%</span>
                 </div>
                 <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000" style={{ width: '45%' }} />
+                  <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000" style={{ width: `${productionProgress}%` }} />
                 </div>
                 <p className="text-[11px] text-[#8F8778] mt-1">
                   ※ 預計將於 8 月初完成印製並進入包裝流程。後續將於 8/8 開放物流寄送問卷填寫，敬請留意本頁面資訊。
@@ -330,18 +330,12 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
           {/* PHASE 3: REDIRECT FORM (August 8 to August 31, 2026) */}
           {currentPhase === 'REDIRECT_FORM' && (
             <div className="w-full flex flex-col items-center text-center page-view-animation">
-              <div className="w-14 h-14 rounded-2xl bg-[#C2A978]/10 text-[#BCA374] flex items-center justify-center mb-4">
-                <ExternalLink className="w-7 h-7 animate-pulse" />
-              </div>
-              
-              <span className="px-3 py-1 rounded-full text-xs font-bold text-[#BCA374] bg-[#C2A978]/10 border border-[#C2A978]/20 mb-2.5">
-                即將導向 Redirecting
-              </span>
+
               <h2 className="text-lg font-black text-[#403C35] mb-2">
-                正在為您導向至問卷表單
+                正在為您導向至感謝刮刮樂表單
               </h2>
               <p className="text-xs text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-                目前正處於「寄送資訊問卷填寫期」(8/8 ~ 8/31)。系統正在將您安全導向至官方 Google 表單，以便填寫您的寄送與贊助者回饋資料。
+                目前正處於「感謝刮刮樂表單填寫期」(8/8 ~ 8/31)。系統正在將您安全導向至官方 Google 表單，以便填寫您的寄送與贊助者回饋資料。
               </p>
 
               <div className="flex items-center gap-2 text-xs text-[#BCA374] font-extrabold animate-bounce mb-4">
