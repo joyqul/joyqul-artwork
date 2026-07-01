@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FamiStoreBanner } from '../components/FamiStoreBanner';
 import { SponsorsData } from './SponsorsData';
-import { ArrowLeft, Calendar, Hourglass, Package, CheckCircle, ExternalLink, Heart, Share2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Hourglass, Package, CheckCircle, ExternalLink, Heart, Share2, ChevronLeft, ChevronRight, X, Image as ImageIcon } from 'lucide-react';
 import * as Assets from '../../assets';
+import { allImages } from '../../assets/2026_special_thanks';
 
 interface SpecialThanksProps {
   onBackToHome: () => void;
@@ -11,11 +12,29 @@ interface SpecialThanksProps {
 
 type CampaignPhase = 'FUNDRAISING' | 'PRODUCTION' | 'REDIRECT_FORM' | 'THANK_WALL';
 
+const IMAGE_METADATA = [
+  { id: 'img01', title: "周邊商品宣傳主頁", category: "" },
+  { id: 'img03', title: "Root款", category: "工程師梗T" },
+  { id: 'img04', title: "工人智慧款", category: "工程師梗T" },
+  { id: 'img05', title: "Dream Job款", category: "工程師梗T" },
+  { id: 'img09', title: "衣服尺寸表", category: "工程師梗T" },
+  { id: 'img12', title: "拍立得盒子款式", category: "拍立得" },
+  { id: 'img13', title: "拍立得", category: "拍立得" },
+  { id: 'img14', title: "鐵盒款注意事項", category: "拍立得" },
+  { id: 'img15', title: "商品對應小卡", category: "特典" },
+  { id: 'img16', title: "感謝刮刮樂", category: "特典" },
+  { id: 'img18', title: "兌換說明", category: "特典" },
+  { id: 'img20', title: "衣服瑕疵退換貨", category: "FAQ" },
+  { id: 'img21', title: "拍立得瑕疵退換貨", category: "FAQ" },
+];
+
 export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps) {
   const [currentPhase, setCurrentPhase] = useState<CampaignPhase>('FUNDRAISING');
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
   const [currentTimeText, setCurrentTimeText] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [showAllImages, setShowAllImages] = useState<boolean>(false);
 
   useEffect(() => {
     const updateCampaignPhase = () => {
@@ -57,6 +76,23 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
     const interval = setInterval(updateCampaignPhase, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (selectedImageIndex === null) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedImageIndex(null);
+      } else if (e.key === 'ArrowRight') {
+        setSelectedImageIndex((prev) => (prev !== null && prev < allImages.length - 1 ? prev + 1 : 0));
+      } else if (e.key === 'ArrowLeft') {
+        setSelectedImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allImages.length - 1));
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImageIndex]);
 
   const handleShare = async () => {
     const shareUrl = "https://joyqul.tw/false_love_signal/2026_special_thanks/";
@@ -338,6 +374,138 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
         )}
 
       </div>
+
+      {/* 2026 Special Thanks Commemorative Illustration & Merchandise Preview Showcase */}
+      <div className="w-full mt-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(#C2A978_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03]" />
+        
+        <div className="w-full flex flex-col items-center text-center relative z-10">
+          <h2 className="text-base font-black text-[#403C35] mb-1.5">
+            預購商品詳細說明頁
+          </h2>
+          <p className="text-[11px] text-[#8F8778] max-w-sm mb-6 leading-relaxed">
+            和賣場放的圖一樣，點擊任一圖片即可放大高畫質檢視。
+          </p>
+
+          {/* Grid Layout */}
+          <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+            {(showAllImages ? allImages : allImages.slice(0, 6)).map((imgSrc, index) => {
+              const meta = IMAGE_METADATA[index];
+              return (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedImageIndex(index);
+                    onTrackClick(`view_thanks_image_${meta?.id || index}`, `點擊檢視周邊圖片: ${meta?.title || index}`);
+                  }}
+                  className="flex flex-col bg-[#FAF8F5]/40 rounded-2xl border border-[#C2A978]/15 hover:border-[#C2A978] overflow-hidden cursor-pointer group hover:shadow-md transition-all duration-300 relative"
+                >
+                  {/* Image container */}
+                  <div className="w-full aspect-square bg-[#FAF8F5] relative overflow-hidden flex items-center justify-center">
+                    <img
+                      src={imgSrc}
+                      alt={meta?.title || `周邊展示 ${index + 1}`}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                      <span className="text-[10px] text-white font-bold bg-[#C2A978] px-2.5 py-1 rounded-full shadow-sm">
+                        放大檢視
+                      </span>
+                    </div>
+                    {/* Category tag */}
+                    {meta?.category && (
+                      <span className="absolute top-2 left-2 text-[8px] font-bold text-[#8F8778] bg-white/95 px-1.5 py-0.5 rounded border border-[#C2A978]/10 shadow-xs z-10">
+                        {meta.category}
+                      </span>
+                    )}
+                  </div>
+                  {/* Label */}
+                  <div className="p-2.5 text-left border-t border-[#C2A978]/10 bg-white">
+                    <h4 className="text-[10px] font-bold text-[#403C35] leading-tight group-hover:text-[#C2A978] transition-colors truncate">
+                      {meta?.title || `周邊限定特製 #${index + 1}`}
+                    </h4>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Toggle Expand / Collapse Button */}
+          <button
+            onClick={() => {
+              setShowAllImages(!showAllImages);
+              onTrackClick('toggle_thanks_gallery', showAllImages ? '收合插畫展示' : '展開完整插畫展示');
+            }}
+            className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#C2A978] hover:text-[#A68F62] bg-[#C2A978]/5 hover:bg-[#C2A978]/10 border border-[#C2A978]/20 rounded-full px-5 py-2.5 transition-all active:scale-95 cursor-pointer"
+          >
+            <span>{showAllImages ? "收合圖片" : `展開完整內容 (共 ${allImages.length} 張)`}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Lightbox Modal (Fixed overlay) */}
+      {selectedImageIndex !== null && (
+        <div 
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 backdrop-blur-md p-4 select-none"
+          onClick={() => setSelectedImageIndex(null)}
+        >
+          {/* Close button top right */}
+          <button 
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImageIndex(null);
+            }}
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Core image area */}
+          <div className="relative max-w-4xl w-full flex items-center justify-center px-12" onClick={(e) => e.stopPropagation()}>
+            {/* Prev Button */}
+            <button
+              className="absolute left-0 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              onClick={() => setSelectedImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allImages.length - 1))}
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Active Image */}
+            <div className="flex flex-col items-center">
+              <img
+                src={allImages[selectedImageIndex]}
+                alt={IMAGE_METADATA[selectedImageIndex]?.title || `周邊展示 ${selectedImageIndex + 1}`}
+                referrerPolicy="no-referrer"
+                className="max-h-[72vh] max-w-full rounded-2xl object-contain border border-white/10 shadow-2xl"
+              />
+              
+              {/* Image Description Metadata */}
+              <div className="mt-4 text-center">
+                <span className="text-[10px] tracking-widest font-bold text-[#C2A978] bg-[#C2A978]/10 border border-[#C2A978]/20 px-2 py-0.5 rounded-full">
+                  {IMAGE_METADATA[selectedImageIndex]?.category || "限定回饋特典"}
+                </span>
+                <h3 className="text-white text-sm font-extrabold mt-2">
+                  {IMAGE_METADATA[selectedImageIndex]?.title || `周邊限定特製 #${selectedImageIndex + 1}`}
+                </h3>
+                <p className="text-slate-400 text-[10px] mt-1 font-mono">
+                  圖片 {selectedImageIndex + 1} / {allImages.length}
+                </p>
+              </div>
+            </div>
+
+            {/* Next Button */}
+            <button
+              className="absolute right-0 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              onClick={() => setSelectedImageIndex((prev) => (prev !== null && prev < allImages.length - 1 ? prev + 1 : 0))}
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

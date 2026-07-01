@@ -9,8 +9,6 @@ import img05 from './05.webp';
 // @ts-ignore
 import img09 from './09.webp';
 // @ts-ignore
-import img11 from './11.webp';
-// @ts-ignore
 import img12 from './12.webp';
 // @ts-ignore
 import img13 from './13.webp';
@@ -19,13 +17,13 @@ import img14 from './14.webp';
 // @ts-ignore
 import img15 from './15.webp';
 // @ts-ignore
-import img17 from './17.webp';
+import img16 from './16.webp';
 // @ts-ignore
 import img18 from './18.webp';
 // @ts-ignore
-import img19 from './19.webp';
-// @ts-ignore
 import img20 from './20.webp';
+// @ts-ignore
+import img21 from './21.webp';
 
 export {
   img01,
@@ -33,15 +31,14 @@ export {
   img04,
   img05,
   img09,
-  img11,
   img12,
   img13,
   img14,
   img15,
-  img17,
+  img16,
   img18,
-  img19,
-  img20
+  img20,
+  img21
 };
 
 export const allImages = [
@@ -50,13 +47,12 @@ export const allImages = [
   img04,
   img05,
   img09,
-  img11,
   img12,
   img13,
   img14,
   img15,
-  img17,
+  img16,
   img18,
-  img19,
-  img20
+  img20,
+  img21
 ];
