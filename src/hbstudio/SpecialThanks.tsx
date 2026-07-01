@@ -126,8 +126,9 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
   };
 
   return (
-    <div className="w-full flex flex-col items-center page-view-animation">
-      {/* Top Bar with Navigation & Share Actions */}
+    <>
+      <div className="w-full flex flex-col items-center page-view-animation">
+        {/* Top Bar with Navigation & Share Actions */}
       <div className="w-full flex justify-between items-center mb-6">
         {/* Go Back button */}
         <button
@@ -454,51 +455,53 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
         </div>
       </div>
 
+      </div>
+
       {/* Lightbox Modal (Fixed overlay) */}
       {selectedImageIndex !== null && (
         <div 
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 backdrop-blur-md p-4 select-none"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 backdrop-blur-md p-4 select-none"
           onClick={() => setSelectedImageIndex(null)}
         >
           {/* Close button top right */}
           <button 
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            className="absolute top-4 right-4 p-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors cursor-pointer z-50"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedImageIndex(null);
             }}
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
 
           {/* Core image area */}
-          <div className="relative max-w-4xl w-full flex items-center justify-center px-12" onClick={(e) => e.stopPropagation()}>
+          <div className="relative max-w-5xl w-full flex items-center justify-center px-4 sm:px-12" onClick={(e) => e.stopPropagation()}>
             {/* Prev Button */}
             <button
-              className="absolute left-0 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              className="absolute left-0 sm:left-4 p-2.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-all active:scale-95 cursor-pointer z-40 hover:bg-white/30"
               onClick={() => setSelectedImageIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allImages.length - 1))}
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8" />
             </button>
 
             {/* Active Image */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center max-w-full">
               <img
                 src={allImages[selectedImageIndex]}
                 alt={IMAGE_METADATA[selectedImageIndex]?.title || `周邊展示 ${selectedImageIndex + 1}`}
                 referrerPolicy="no-referrer"
-                className="max-h-[72vh] max-w-full rounded-2xl object-contain border border-white/10 shadow-2xl"
+                className="max-h-[80vh] md:max-h-[85vh] max-w-full rounded-2xl object-contain border border-white/10 shadow-2xl transition-all duration-300"
               />
               
               {/* Image Description Metadata */}
-              <div className="mt-4 text-center">
-                <span className="text-[10px] tracking-widest font-bold text-[#C2A978] bg-[#C2A978]/10 border border-[#C2A978]/20 px-2 py-0.5 rounded-full">
+              <div className="mt-4 text-center px-4 bg-black/45 py-2.5 rounded-2xl backdrop-blur-xs border border-white/5 max-w-md">
+                <span className="text-[10px] tracking-widest font-bold text-[#C2A978] bg-[#C2A978]/10 border border-[#C2A978]/20 px-2.5 py-0.5 rounded-full">
                   {IMAGE_METADATA[selectedImageIndex]?.category || "限定回饋特典"}
                 </span>
-                <h3 className="text-white text-sm font-extrabold mt-2">
+                <h3 className="text-white text-sm sm:text-base font-extrabold mt-2">
                   {IMAGE_METADATA[selectedImageIndex]?.title || `周邊限定特製 #${selectedImageIndex + 1}`}
                 </h3>
-                <p className="text-slate-400 text-[10px] mt-1 font-mono">
+                <p className="text-slate-400 text-[10px] sm:text-xs mt-1 font-mono">
                   圖片 {selectedImageIndex + 1} / {allImages.length}
                 </p>
               </div>
@@ -506,15 +509,14 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
 
             {/* Next Button */}
             <button
-              className="absolute right-0 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              className="absolute right-0 sm:right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-all active:scale-95 cursor-pointer z-40 hover:bg-white/30"
               onClick={() => setSelectedImageIndex((prev) => (prev !== null && prev < allImages.length - 1 ? prev + 1 : 0))}
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" />
             </button>
           </div>
         </div>
       )}
-
-    </div>
+    </>
   );
 }
