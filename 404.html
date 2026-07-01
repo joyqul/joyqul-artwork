@@ -222,8 +222,10 @@
         // Match clean comic slugs (e.g., /comic/false_love_signal_manga or without trailing slash)
         const pathMatch = path.match(/\/comic\/([^/]+)/);
         const isQuiz = path.includes('/quiz');
+        const isSpecialThanks = path.includes('/false_love_signal/2026_special_thanks');
+        const isGoods = path.includes('/false_love_signal/2026_goods');
         
-        if (pathMatch || isQuiz) {
+        if (pathMatch || isQuiz || isSpecialThanks || isGoods) {
           const recoverySection = document.getElementById("recovery-notice");
           const ctaBtn = document.getElementById("cta-btn");
           
@@ -235,6 +237,10 @@
           let spaTarget = window.location.protocol + '//' + window.location.host;
           if (isQuiz) {
             spaTarget += '/#/quiz' + window.location.search;
+          } else if (isSpecialThanks) {
+            spaTarget += '/#/false_love_signal/2026_special_thanks' + window.location.search;
+          } else if (isGoods) {
+            spaTarget += '/#/false_love_signal/2026_goods' + window.location.search;
           } else {
             const comicId = pathMatch[1];
             spaTarget += '/#/comic/' + comicId + window.location.search;
