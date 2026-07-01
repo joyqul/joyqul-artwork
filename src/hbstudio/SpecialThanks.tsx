@@ -386,74 +386,76 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
       )}
 
       {/* 2026 Special Thanks Commemorative Illustration & Merchandise Preview Showcase */}
-      <div className="w-full mt-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(#C2A978_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03]" />
-        
-        <div className="w-full flex flex-col items-center text-center relative z-10">
-          <h2 className="text-base font-black text-[#403C35] mb-1.5">
-            預購商品詳細說明頁
-          </h2>
-          <p className="text-[11px] text-[#8F8778] max-w-sm mb-6 leading-relaxed">
-            和賣場放的圖一樣，點擊任一圖片即可放大高畫質檢視。
-          </p>
+      {(currentPhase === 'PRODUCTION' || currentPhase === 'REDIRECT_FORM') && (
+        <div className="w-full mt-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#C2A978]/20 shadow-sm relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(#C2A978_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03]" />
+          
+          <div className="w-full flex flex-col items-center text-center relative z-10">
+            <h2 className="text-base font-black text-[#403C35] mb-1.5">
+              預購商品詳細說明頁
+            </h2>
+            <p className="text-[11px] text-[#8F8778] max-w-sm mb-6 leading-relaxed">
+              和賣場放的圖一樣，點擊任一圖片即可放大高畫質檢視。
+            </p>
 
-          {/* Grid Layout */}
-          <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-            {(showAllImages ? allImages : allImages.slice(0, 6)).map((imgSrc, index) => {
-              const meta = IMAGE_METADATA[index];
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setSelectedImageIndex(index);
-                    onTrackClick(`view_thanks_image_${meta?.id || index}`, `點擊檢視周邊圖片: ${meta?.title || index}`);
-                  }}
-                  className="flex flex-col bg-[#FAF8F5]/40 rounded-2xl border border-[#C2A978]/15 hover:border-[#C2A978] overflow-hidden cursor-pointer group hover:shadow-md transition-all duration-300 relative"
-                >
-                  {/* Image container */}
-                  <div className="w-full aspect-square bg-[#FAF8F5] relative overflow-hidden flex items-center justify-center">
-                    <img
-                      src={imgSrc}
-                      alt={meta?.title || `周邊展示 ${index + 1}`}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                      <span className="text-[10px] text-white font-bold bg-[#C2A978] px-2.5 py-1 rounded-full shadow-sm">
-                        放大檢視
-                      </span>
+            {/* Grid Layout */}
+            <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+              {(showAllImages ? allImages : allImages.slice(0, 6)).map((imgSrc, index) => {
+                const meta = IMAGE_METADATA[index];
+                return (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setSelectedImageIndex(index);
+                      onTrackClick(`view_thanks_image_${meta?.id || index}`, `點擊檢視周邊圖片: ${meta?.title || index}`);
+                    }}
+                    className="flex flex-col bg-[#FAF8F5]/40 rounded-2xl border border-[#C2A978]/15 hover:border-[#C2A978] overflow-hidden cursor-pointer group hover:shadow-md transition-all duration-300 relative"
+                  >
+                    {/* Image container */}
+                    <div className="w-full aspect-square bg-[#FAF8F5] relative overflow-hidden flex items-center justify-center">
+                      <img
+                        src={imgSrc}
+                        alt={meta?.title || `周邊展示 ${index + 1}`}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                        <span className="text-[10px] text-white font-bold bg-[#C2A978] px-2.5 py-1 rounded-full shadow-sm">
+                          放大檢視
+                        </span>
+                      </div>
+                      {/* Category tag */}
+                      {meta?.category && (
+                        <span className="absolute top-2 left-2 text-[8px] font-bold text-[#8F8778] bg-white/95 px-1.5 py-0.5 rounded border border-[#C2A978]/10 shadow-xs z-10">
+                          {meta.category}
+                        </span>
+                      )}
                     </div>
-                    {/* Category tag */}
-                    {meta?.category && (
-                      <span className="absolute top-2 left-2 text-[8px] font-bold text-[#8F8778] bg-white/95 px-1.5 py-0.5 rounded border border-[#C2A978]/10 shadow-xs z-10">
-                        {meta.category}
-                      </span>
-                    )}
+                    {/* Label */}
+                    <div className="p-2.5 text-left border-t border-[#C2A978]/10 bg-white">
+                      <h4 className="text-[10px] font-bold text-[#403C35] leading-tight group-hover:text-[#C2A978] transition-colors truncate">
+                        {meta?.title || `周邊限定特製 #${index + 1}`}
+                      </h4>
+                    </div>
                   </div>
-                  {/* Label */}
-                  <div className="p-2.5 text-left border-t border-[#C2A978]/10 bg-white">
-                    <h4 className="text-[10px] font-bold text-[#403C35] leading-tight group-hover:text-[#C2A978] transition-colors truncate">
-                      {meta?.title || `周邊限定特製 #${index + 1}`}
-                    </h4>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* Toggle Expand / Collapse Button */}
-          <button
-            onClick={() => {
-              setShowAllImages(!showAllImages);
-              onTrackClick('toggle_thanks_gallery', showAllImages ? '收合插畫展示' : '展開完整插畫展示');
-            }}
-            className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#C2A978] hover:text-[#A68F62] bg-[#C2A978]/5 hover:bg-[#C2A978]/10 border border-[#C2A978]/20 rounded-full px-5 py-2.5 transition-all active:scale-95 cursor-pointer"
-          >
-            <span>{showAllImages ? "收合圖片" : `展開完整內容 (共 ${allImages.length} 張)`}</span>
-          </button>
+            {/* Toggle Expand / Collapse Button */}
+            <button
+              onClick={() => {
+                setShowAllImages(!showAllImages);
+                onTrackClick('toggle_thanks_gallery', showAllImages ? '收合插畫展示' : '展開完整插畫展示');
+              }}
+              className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#C2A978] hover:text-[#A68F62] bg-[#C2A978]/5 hover:bg-[#C2A978]/10 border border-[#C2A978]/20 rounded-full px-5 py-2.5 transition-all active:scale-95 cursor-pointer"
+            >
+              <span>{showAllImages ? "收合圖片" : `展開完整內容 (共 ${allImages.length} 張)`}</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       </div>
 
