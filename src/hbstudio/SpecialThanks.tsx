@@ -169,8 +169,8 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
         </h1>
         <p className="text-xs text-[#8F8778] mt-1.5 relative z-10 max-w-sm">
           {isPreOrderStarted 
-            ? "高能訊號工作室 (Hyper Bio-Signal Studio) 周邊企劃專屬頁" 
-            : "預購商品詳細說明（預購將於 7/2 晚上九點開始）"}
+            ? "周邊企劃專屬頁" 
+            : "預購將於 7/2 晚上九點開始"}
         </p>
 
         {/* Campaign Timeline Progress Visualizer */}
