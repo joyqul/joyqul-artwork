@@ -37,8 +37,7 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
 
   useEffect(() => {
     const updateCampaignPhase = () => {
-      //const now = new Date();
-      const now = new Date("2026-07-02T21:00:01+08:00");
+      const now = new Date();
       
       // Taipei Time date parsing (UTC+8)
       const datePreOrderStart = new Date("2026-07-02T21:00:00+08:00");
