@@ -20,7 +20,7 @@ export function FamiStoreBanner({ onTrackClick }: FamiStoreBannerProps) {
         </div>
         <div className="text-left">
           <span className="text-[9px] font-extrabold tracking-wider text-[#C2A978] uppercase bg-[#C2A978]/10 px-1.5 py-0.5 rounded border border-[#C2A978]/15">
-            預購日期：7/2 ~ 7/14
+            預購日期：7/2 ~ 7/10
           </span>
           <h3 className="text-xs sm:text-sm font-bold text-[#403C35] mt-1 tracking-wide">
             《虛假的戀愛訊號》周邊商品
