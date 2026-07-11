@@ -17,7 +17,6 @@ import { ComicDetailsView } from './components/ComicDetailsView';
 import { RecommendationQuiz } from './components/RecommendationQuiz';
 import { RecommendationBanner } from './components/RecommendationBanner';
 import { SpecialThanks } from './hbstudio/SpecialThanks';
-import { GoodsPreview } from './hbstudio/GoodsPreview';
 
 declare global {
   interface Window {
@@ -53,14 +52,6 @@ export default function App() {
     return hash.startsWith('#/false_love_signal/2026_special_thanks') || 
            hash.startsWith('#//false_love_signal/2026_special_thanks') ||
            path.includes('false_love_signal/2026_special_thanks');
-  });
-
-  const [isGoodsActive, setIsGoodsActive] = useState<boolean>(() => {
-    const hash = window.location.hash;
-    const path = window.location.pathname;
-    return hash.startsWith('#/false_love_signal/2026_goods') || 
-           hash.startsWith('#//false_love_signal/2026_goods') ||
-           path.includes('false_love_signal/2026_goods');
   });
 
   // Single-page hybrid router supporting both clean path slugs and fallback hashes
@@ -128,20 +119,10 @@ export default function App() {
     }
     const finalSearch = search || hashSearch;
 
-    if (hash.startsWith('#/false_love_signal/2026_goods') ||
-        hash.startsWith('#//false_love_signal/2026_goods')) {
-      window.history.replaceState(null, '', `/false_love_signal/2026_goods/${finalSearch}`);
-      setIsGoodsActive(true);
-      setIsSpecialThanksActive(false);
-      setIsQuizActive(false);
-      setSelectedComicId(null);
-    } else if (isGoodsActive) {
-      window.history.replaceState(null, '', `/false_love_signal/2026_goods/${finalSearch}`);
-    } else if (hash.startsWith('#/false_love_signal/2026_special_thanks') ||
+    if (hash.startsWith('#/false_love_signal/2026_special_thanks') ||
         hash.startsWith('#//false_love_signal/2026_special_thanks')) {
       window.history.replaceState(null, '', `/false_love_signal/2026_special_thanks/${finalSearch}`);
       setIsSpecialThanksActive(true);
-      setIsGoodsActive(false);
       setIsQuizActive(false);
       setSelectedComicId(null);
     } else if (isSpecialThanksActive) {
@@ -152,13 +133,11 @@ export default function App() {
       setSelectedComicId(id);
       setIsQuizActive(false);
       setIsSpecialThanksActive(false);
-      setIsGoodsActive(false);
     } else if (hash.startsWith('#/quiz')) {
       window.history.replaceState(null, '', `/quiz/${finalSearch}`);
       setIsQuizActive(true);
       setSelectedComicId(null);
       setIsSpecialThanksActive(false);
-      setIsGoodsActive(false);
     } else if (isQuizActive) {
       window.history.replaceState(null, '', `/quiz/${finalSearch}`);
     } else if (selectedComicId) {
@@ -167,30 +146,17 @@ export default function App() {
     } else {
       window.history.replaceState(null, '', `/${finalSearch}`);
     }
-  }, [selectedComicId, isQuizActive, isSpecialThanksActive, isGoodsActive]);
+  }, [selectedComicId, isQuizActive, isSpecialThanksActive]);
 
   useEffect(() => {
     const handlePopState = () => {
       const hash = window.location.hash;
       const path = window.location.pathname;
       
-      if (path.includes('false_love_signal/2026_goods') || 
-          hash.startsWith('#/false_love_signal/2026_goods') ||
-          hash.startsWith('#//false_love_signal/2026_goods')) {
-        setIsGoodsActive(true);
-        setIsSpecialThanksActive(false);
-        setIsQuizActive(false);
-        setSelectedComicId(null);
-        setQuizResultId(null);
-        return;
-      }
-      setIsGoodsActive(false);
-
       if (path.includes('false_love_signal/2026_special_thanks') || 
           hash.startsWith('#/false_love_signal/2026_special_thanks') ||
           hash.startsWith('#//false_love_signal/2026_special_thanks')) {
         setIsSpecialThanksActive(true);
-        setIsGoodsActive(false);
         setIsQuizActive(false);
         setSelectedComicId(null);
         setQuizResultId(null);
@@ -245,7 +211,6 @@ export default function App() {
 
   const navigateToQuiz = (active: boolean) => {
     setIsSpecialThanksActive(false);
-    setIsGoodsActive(false);
     if (active) {
       window.history.pushState(null, '', `/quiz/`);
       setIsQuizActive(true);
@@ -262,7 +227,6 @@ export default function App() {
 
   const navigateToComic = (id: string | null) => {
     setIsSpecialThanksActive(false);
-    setIsGoodsActive(false);
     setIsQuizActive(false);
     setQuizResultId(null);
     if (id) {
@@ -274,37 +238,16 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' as any });
   };
 
-  const navigateToGoods = (active: boolean) => {
-    if (active) {
-      window.history.pushState(null, '', `/false_love_signal/2026_goods/`);
-      setIsGoodsActive(true);
-      setIsSpecialThanksActive(false);
-      setIsQuizActive(false);
-      setSelectedComicId(null);
-      setQuizResultId(null);
-    } else {
-      window.history.pushState(null, '', '/');
-      setIsGoodsActive(false);
-      setIsSpecialThanksActive(false);
-      setIsQuizActive(false);
-      setSelectedComicId(null);
-      setQuizResultId(null);
-    }
-    window.scrollTo({ top: 0, behavior: 'instant' as any });
-  };
-
   const navigateToSpecialThanks = (active: boolean) => {
     if (active) {
       window.history.pushState(null, '', `/false_love_signal/2026_special_thanks/`);
       setIsSpecialThanksActive(true);
-      setIsGoodsActive(false);
       setIsQuizActive(false);
       setSelectedComicId(null);
       setQuizResultId(null);
     } else {
       window.history.pushState(null, '', '/');
       setIsSpecialThanksActive(false);
-      setIsGoodsActive(false);
       setIsQuizActive(false);
       setSelectedComicId(null);
       setQuizResultId(null);
@@ -460,12 +403,7 @@ export default function App() {
     const sharedComic = quizResultId ? data.artworks.find(art => art.id === quizResultId) : null;
     const sharedDetail = quizResultId ? COMIC_DETAILS[quizResultId] : null;
 
-    if (isGoodsActive) {
-      pagePath = '/false_love_signal/2026_goods/';
-      pageTitle = "《虛假的戀愛訊號》預購商品詳細說明頁 | 玖伊枯 作品集";
-      pageDesc = "高能訊號工作室 (Hyper Biosignal Studio) 官方募資周邊企劃商品高畫質展示與詳細尺寸、材質說明。";
-      documentTitle = "《虛假的戀愛訊號》預購商品詳細說明頁 | 玖伊枯 作品集 (joyqul.tw)";
-    } else if (isSpecialThanksActive) {
+    if (isSpecialThanksActive) {
       pagePath = '/false_love_signal/2026_special_thanks/';
       pageTitle = "《虛假的戀愛訊號》周邊預購感謝名單與進度 | 玖伊枯 作品集";
       pageDesc = "「即日起至 7/10 募資中」、「商品製作中」與「感謝贊助名單」。高能訊號工作室 (Hyper Biosignal Studio) 官方募資周邊企劃專屬頁。";
@@ -505,9 +443,7 @@ export default function App() {
       ? rawImage 
       : `https://joyqul.tw/${cleanAssetPath}`;
 
-    const pageUrl = isGoodsActive
-      ? 'https://joyqul.tw/false_love_signal/2026_goods/'
-      : isSpecialThanksActive
+    const pageUrl = isSpecialThanksActive
         ? 'https://joyqul.tw/false_love_signal/2026_special_thanks/'
         : isQuizActive
           ? (quizResultId ? `https://joyqul.tw/quiz/?result=${quizResultId}` : 'https://joyqul.tw/quiz/')
@@ -550,7 +486,7 @@ export default function App() {
         cookie_flags: 'SameSite=None;Secure'
       });
     }
-  }, [selectedComicId, displayName, detail, mainComic, isQuizActive, quizResultId, isSpecialThanksActive, isGoodsActive]);
+  }, [selectedComicId, displayName, detail, mainComic, isQuizActive, quizResultId, isSpecialThanksActive]);
 
   const onSocialClick = (platform: string, label: string, url: string) => {
     trackClick(`social_${platform}`, label, { url });
@@ -594,14 +530,7 @@ export default function App() {
       {/* Main minimalist Portaly canvas container */}
       <div className="max-w-xl mx-auto px-5 pt-8">
         
-        {isGoodsActive ? (
-          /* GOODS PREVIEW PAGE */
-          <GoodsPreview 
-            onBackToHome={() => navigateToGoods(false)}
-            onNavigateToSpecialThanks={() => navigateToSpecialThanks(true)}
-            onTrackClick={trackClick}
-          />
-        ) : isSpecialThanksActive ? (
+        {isSpecialThanksActive ? (
           /* SPECIAL THANKS PAGE */
           <SpecialThanks 
             onBackToHome={() => navigateToSpecialThanks(false)}
