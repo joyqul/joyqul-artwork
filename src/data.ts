@@ -133,6 +133,14 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       description: "Mii 版本的學長真的很可愛⋯⋯"
     },
     {
+      id: "false_love_signal_2026_special_thanks",
+      title: "2026 Special Thanks List",
+      imageUrl: Assets.falseLoveSignalHBioSignalLogo,
+      canvasType: "normal",
+      linkUrl: "/false_love_signal/2026_special_thanks",
+      description: "高能信號工作室贊助者名單"
+    },
+    {
       id: "calculus_manga",
       title:"",
       imageUrl: Assets.calculusBanner,

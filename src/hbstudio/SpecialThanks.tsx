@@ -6,28 +6,13 @@ import * as Assets from '../../assets';
 
 interface SpecialThanksProps {
   onBackToHome: () => void;
+  onNavigateToComic: (id: string) => void;
   onTrackClick: (id: string, text: string) => void;
 }
 
 type CampaignPhase = 'FUNDRAISING' | 'PRODUCTION' | 'REDIRECT_FORM' | 'THANK_WALL';
 
-const IMAGE_METADATA = [
-  { id: 'img01', title: "周邊商品宣傳主頁", category: "" },
-  { id: 'img03', title: "Root款", category: "工程師梗T" },
-  { id: 'img04', title: "工人智慧款", category: "工程師梗T" },
-  { id: 'img05', title: "Dream Job款", category: "工程師梗T" },
-  { id: 'img09', title: "衣服尺寸表", category: "工程師梗T" },
-  { id: 'img12', title: "拍立得盒子款式", category: "拍立得" },
-  { id: 'img13', title: "拍立得", category: "拍立得" },
-  { id: 'img14', title: "鐵盒款注意事項", category: "拍立得" },
-  { id: 'img15', title: "商品對應小卡", category: "特典" },
-  { id: 'img16', title: "感謝刮刮樂", category: "特典" },
-  { id: 'img18', title: "兌換說明", category: "特典" },
-  { id: 'img20', title: "衣服瑕疵退換貨", category: "FAQ" },
-  { id: 'img21', title: "拍立得瑕疵退換貨", category: "FAQ" },
-];
-
-export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps) {
+export function SpecialThanks({ onBackToHome, onNavigateToComic, onTrackClick }: SpecialThanksProps) {
   const [currentPhase, setCurrentPhase] = useState<CampaignPhase>('FUNDRAISING');
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
   const [currentTimeText, setCurrentTimeText] = useState<string>('');
@@ -124,17 +109,7 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
     <>
       <div className="w-full flex flex-col items-center page-view-animation">
         {/* Top Bar with Navigation & Share Actions */}
-      <div className="w-full flex justify-between items-center mb-6">
-        {/* Go Back button */}
-        <button
-          onClick={onBackToHome}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#C2A978]/30 bg-white hover:bg-[#C2A978]/10 hover:border-[#C2A978] text-xs font-bold text-[#8F8778] hover:text-[#403C35] active:scale-95 transition-all"
-          id="btn-back-to-home"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          返回首頁
-        </button>
-
+      <div className="w-full flex justify-end items-center mb-6">
         {/* Share Button */}
         <button
           onClick={handleShare}
@@ -258,6 +233,33 @@ export function SpecialThanks({ onBackToHome, onTrackClick }: SpecialThanksProps
           </div>
         </div>
       </div>
+
+      {/* Link to False Love Signal Comic Page Banner */}
+      <button
+        onClick={() => {
+          onTrackClick('go_to_comic_from_thanks', '從感謝名單頁前往漫畫介紹頁');
+          onNavigateToComic('false_love_signal_manga');
+        }}
+        className="w-full mb-6 p-4 bg-white hover:bg-[#C2A978]/5 border border-[#C2A978]/20 rounded-3xl flex items-center justify-between cursor-pointer hover:border-[#C2A978] transition-all duration-300 group text-left shadow-[0_4px_16px_rgba(194,169,120,0.03)]"
+        id="btn-go-to-comic-detail"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#C2A978]/10 text-[#C2A978] flex items-center justify-center text-lg select-none">
+            📖
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xs font-black text-[#403C35] group-hover:text-[#C2A978] transition-colors leading-tight">
+              觀看《虛假的戀愛訊號》漫畫介紹 ➜
+            </h3>
+            <p className="text-[10px] text-[#8F8778] mt-1 leading-snug">
+              看故事簡介、角色介紹，以及官方正版線上連載與番外篇連結！
+            </p>
+          </div>
+        </div>
+        <span className="text-[10px] font-extrabold text-[#C2A978] bg-[#FAF8F5] group-hover:bg-[#C2A978] group-hover:text-white px-2.5 py-1 rounded-full border border-[#C2A978]/15 group-hover:border-[#C2A978] transition-all duration-300 shadow-2xs whitespace-nowrap">
+          詳細介紹
+        </span>
+      </button>
 
       {/* Core Dynamic Content Container */}
       {isPreOrderStarted && (

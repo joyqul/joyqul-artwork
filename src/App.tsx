@@ -534,6 +534,7 @@ export default function App() {
           /* SPECIAL THANKS PAGE */
           <SpecialThanks 
             onBackToHome={() => navigateToSpecialThanks(false)}
+            onNavigateToComic={navigateToComic}
             onTrackClick={trackClick}
           />
         ) : isQuizActive ? (
