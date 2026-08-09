@@ -5,6 +5,8 @@ import falseLoveSignalExt from './false_love_signal_ext.webp';
 // @ts-ignore
 import falseLoveSignalHBioSignalLogo from './false_love_signal_h_bio_signal_logo.webp';
 // @ts-ignore
+import falseLoveSignalLineStickerV1 from './false_love_signal_line_sticker_v1.webp';
+// @ts-ignore
 import falseLoveSignalR18 from './false_love_signal_r18.webp';
 // @ts-ignore
 import falseLoveSignalShorts from './false_love_signal_shorts.webp';
@@ -31,6 +33,7 @@ export {
   falseLoveSignalBanner,
   falseLoveSignalExt,
   falseLoveSignalHBioSignalLogo,
+  falseLoveSignalLineStickerV1,
   falseLoveSignalR18,
   falseLoveSignalShorts,
   falseLoveSignalSound,

@@ -133,12 +133,20 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       description: "Mii 版本的學長真的很可愛⋯⋯"
     },
     {
+      id: "false_love_signal_line_sticker_v1",
+      title: "LINE 貼圖",
+      imageUrl: Assets.falseLoveSignalLineStickerV1,
+      canvasType: "normal",
+      linkUrl: "https://line.me/S/sticker/35399791",
+      description: "是時候把學長帶回家了！"
+    },
+    {
       id: "false_love_signal_2026_special_thanks",
       title: "2026 Special Thanks List",
       imageUrl: Assets.falseLoveSignalHBioSignalLogo,
       canvasType: "normal",
       linkUrl: "/false_love_signal/2026_special_thanks",
-      description: "高能信號工作室贊助者名單"
+      description: "高能訊號工作室贊助者名單"
     },
     {
       id: "calculus_manga",
