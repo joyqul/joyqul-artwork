@@ -8,6 +8,7 @@ interface Sponsor {
 
 export interface SponsorsDataProps {
   onBackToHome: () => void;
+  isDark?: boolean;
 }
 
 const SPONSORS_WITH_MESSAGES: Sponsor[] = [
@@ -18,32 +19,26 @@ const SPONSORS_WITH_MESSAGES: Sponsor[] = [
   { name: "Iceborne", message: "感謝創作，希望不久後還有新作品能看！" }
 ];
 
-export function SponsorsData({ onBackToHome }: SponsorsDataProps) {
+export function SponsorsData({ onBackToHome, isDark = false }: SponsorsDataProps) {
   return (
     <div className="w-full flex flex-col items-center page-view-animation">
       {/* Unified Sponsors Section */}
       <div className="w-full mb-8">
-        <div className="flex items-center gap-2 mb-5 justify-center">
-          <Heart className="w-5 h-5 text-[#C2A978] fill-[#C2A978]" />
-          <h3 className="text-sm font-extrabold tracking-widest text-[#403C35] uppercase bg-[#C2A978]/10 px-4 py-1.5 rounded-full border border-[#C2A978]/20">
-            贊助者名單
-          </h3>
-        </div>
-
         {/* Sponsor Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
           {SPONSORS_WITH_MESSAGES.map((sponsor, index) => (
             <div 
               key={index}
-              className="p-4 rounded-2xl border border-[#C2A978]/25 bg-gradient-to-br from-[#FAF8F5] to-white shadow-[0_2px_12px_rgba(194,169,120,0.06)] flex gap-3 items-start text-left relative overflow-hidden group hover:border-[#C2A978] transition-all"
+              className={`p-4 rounded-2xl border flex gap-3 items-start text-left relative overflow-hidden group transition-all ${
+                isDark
+                  ? 'border-stone-800 bg-stone-900/80 hover:border-[#C2A978]/60 shadow-none'
+                  : 'border-[#C2A978]/25 bg-gradient-to-br from-[#FAF8F5] to-white shadow-[0_2px_12px_rgba(194,169,120,0.06)] hover:border-[#C2A978]'
+              }`}
             >
-              <div className="w-7 h-7 rounded-lg bg-[#C2A978]/10 flex items-center justify-center text-[#C2A978] text-xs font-extrabold shrink-0 mt-0.5">
-                {index + 1}
-              </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-sm font-bold text-[#403C35]">{sponsor.name}</h4>
+                <h4 className={`text-sm font-bold ${isDark ? 'text-stone-200' : 'text-[#403C35]'}`}>{sponsor.name}</h4>
                 {sponsor.message && (
-                  <p className="text-xs text-[#8F8778] mt-1 italic leading-relaxed">
+                  <p className={`text-xs mt-1 italic leading-relaxed ${isDark ? 'text-stone-400' : 'text-[#8F8778]'}`}>
                     {sponsor.message}
                   </p>
                 )}
@@ -53,21 +48,15 @@ export function SponsorsData({ onBackToHome }: SponsorsDataProps) {
         </div>
 
         {/* Thank You Note */}
-        <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-[#C2A978]/15 text-center">
-          <p className="text-[11px] text-[#8F8778] max-w-md mx-auto leading-relaxed">
-            以及所有在各平台默默按讚、分享、收藏、留言，以及預購周邊的每一位讀者，感謝你們熱烈支持高能訊號工作室！
+        <div className={`p-5 rounded-2xl border text-center transition-colors ${
+          isDark
+            ? 'bg-stone-900/80 border-stone-800 text-stone-400'
+            : 'bg-[#FAF8F5] border-[#C2A978]/15 text-[#8F8778]'
+        }`}>
+          <p className="text-[11px] max-w-md mx-auto leading-relaxed">
+            以及所有選擇匿名贊助、在各平台默默按讚、分享、收藏、留言的每一位讀者！
           </p>
         </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="w-full flex justify-center mt-2">
-        <button
-          onClick={onBackToHome}
-          className="w-full sm:w-auto px-8 py-3 rounded-full bg-[#C2A978] hover:bg-[#A68F62] text-white text-xs font-extrabold tracking-widest uppercase shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
-        >
-          返回作品集首頁
-        </button>
       </div>
     </div>
   );

@@ -519,7 +519,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#403C35] font-sans pb-24 relative selection:bg-[#C2A978]/30 selection:text-[#403C35]">
+    <div id="app-main-container" className="min-h-screen bg-[#FAF8F5] text-[#403C35] font-sans pb-24 relative selection:bg-[#C2A978]/30 selection:text-[#403C35] transition-colors duration-300">
       
       {/* Search Engine Optimization (SEO) Semantic Content - Invisible but fully indexed by search engines */}
       <SEOSemantic authorName={data.profile.name} />
