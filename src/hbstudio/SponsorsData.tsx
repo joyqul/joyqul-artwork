@@ -17,7 +17,7 @@ const SPONSORS_WITH_MESSAGES: Sponsor[] = [
   { name: "kk24", message: "兩件衣服跟拍立得套組都很喜歡，沒想到還有這麼多小禮物！很多很可愛很有趣的小東西XD 謝謝老師！ 這次的完結周邊真的收得很滿足(ˉ︶ˉ)⁄ 老師的作品很棒，會繼續支持的~" },
   { name: "lisa", message: "好棒好棒 也謝謝有台配 有台配後看漫畫自動代入聲音 也更享受了 衣服很舒服" },
   { name: "Iceborne", message: "感謝創作，希望不久後還有新作品能看！" },
-  {name: "橙魚", message: "謝謝老師帶來這麼棒的故事和好可愛的他們❤️🤲🏻"},
+  { name: "橙魚", message: "謝謝老師帶來這麼棒的故事和好可愛的他們❤️🤲🏻"},
 ];
 
 export function SponsorsData({ onBackToHome, isDark = false }: SponsorsDataProps) {
@@ -26,7 +26,7 @@ export function SponsorsData({ onBackToHome, isDark = false }: SponsorsDataProps
       {/* Unified Sponsors Section */}
       <div className="w-full mb-8">
         {/* Sponsor Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+        <div className="grid grid-cols-1 gap-3.5 mb-6">
           {SPONSORS_WITH_MESSAGES.map((sponsor, index) => (
             <div 
               key={index}
