@@ -38,13 +38,8 @@ export default function App() {
   // Read-only frontend state mapped from data file
   const data = INITIAL_PORTFOLIO_DATA;
 
-  // Active banner duration check (July 1st to July 14th, 2026 inclusive, in Taipei Time / UTC+8)
-  const isFamiStoreActive = (): boolean => {
-    const now = new Date();
-    const start = new Date("2026-07-02T21:00:00+08:00");
-    const end = new Date("2026-07-10T23:59:59+08:00");
-    return now >= start && now <= end;
-  };
+  // Banner is active as requested by user
+  const isFamiStoreActive = (): boolean => true;
 
   const [isSpecialThanksActive, setIsSpecialThanksActive] = useState<boolean>(() => {
     const hash = window.location.hash;
